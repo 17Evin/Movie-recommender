@@ -1,0 +1,2456 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WatchOrder — Streaming Universe & AI Watch Guide</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Space Grotesk, Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        obsidian: {
+                            950: '#040711',
+                            900: '#090f1f',
+                            850: '#0d152b',
+                            800: '#131f3d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #040711;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        /* Architectural Grid Overlay */
+        .bg-grid-pattern {
+            background-size: 48px 48px;
+            background-image: 
+                linear-gradient(to right, rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.035) 1px, transparent 1px);
+        }
+
+        /* Animated Aurora Orbs */
+        @keyframes auroraFloat {
+            0%, 100% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -25px) scale(1.06); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+        .aurora-orb-1 {
+            animation: auroraFloat 16s ease-in-out infinite;
+        }
+        .aurora-orb-2 {
+            animation: auroraFloat 21s ease-in-out infinite reverse;
+        }
+
+        /* Frosted Obsidian Glass */
+        .glass-panel {
+            background: rgba(9, 15, 31, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(56, 189, 248, 0.14);
+        }
+        .glass-card {
+            background: linear-gradient(145deg, rgba(15, 24, 48, 0.85), rgba(8, 13, 27, 0.92));
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.45);
+            box-shadow: 0 12px 32px -10px rgba(37, 99, 235, 0.35), 0 0 18px -4px rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Theatrical Poster Frame & Rim Glow */
+        .poster-frame {
+            position: relative;
+            aspect-ratio: 2 / 3;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            background: linear-gradient(160deg, #0f1b38 0%, #070c1b 100%);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.75), inset 0 0 0 1px rgba(56, 189, 248, 0.22);
+        }
+        .poster-rim-glow {
+            box-shadow: 0 18px 40px -10px rgba(37, 99, 235, 0.55), 0 0 24px -4px rgba(56, 189, 248, 0.35), inset 0 0 0 1px rgba(56, 189, 248, 0.45);
+        }
+        .poster-grain {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+            background-size: 12px 12px;
+        }
+        .poster-img-fade {
+            opacity: 0;
+            transition: opacity 0.45s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .poster-img-fade.loaded {
+            opacity: 1;
+        }
+
+        /* Luminous Constellation Timeline Line */
+        .constellation-track::before {
+            content: '';
+            position: absolute;
+            top: 2.75rem;
+            bottom: -1.25rem;
+            left: 1.35rem;
+            width: 2px;
+            background: linear-gradient(to bottom, #38bdf8, rgba(37, 99, 235, 0.2));
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+            z-index: 0;
+        }
+        .constellation-node:last-child .constellation-track::before {
+            display: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: #040711; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+
+        /* Circular Progress Ring Transition */
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Hide scrollbars on horizontal filter chips */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-sky-400 selection:text-slate-950 bg-grid-pattern relative">
+
+    <!-- Ambient Aurora Background Glows -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="aurora-orb-1 absolute -top-32 -left-24 w-[32rem] h-[32rem] rounded-full bg-blue-600/20 blur-[130px]"></div>
+        <div class="aurora-orb-2 absolute top-1/3 -right-32 w-[30rem] h-[30rem] rounded-full bg-cyan-500/15 blur-[130px]"></div>
+        <div class="aurora-orb-1 absolute -bottom-40 left-1/3 w-[34rem] h-[34rem] rounded-full bg-indigo-600/15 blur-[140px]"></div>
+    </div>
+
+    <!-- Floating Glass Pill Navigation Dock -->
+    <header class="sticky top-3 z-40 px-3 sm:px-6">
+        <div class="max-w-6xl mx-auto glass-panel rounded-full px-3 sm:px-5 h-14 sm:h-16 flex items-center justify-between shadow-2xl shadow-blue-950/60">
+            <!-- Brand Logo -->
+            <button onclick="resetToHome()" class="flex items-center gap-2.5 group focus:outline-none cursor-pointer pl-1">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 via-sky-500 to-cyan-300 flex items-center justify-center text-slate-950 shadow-lg shadow-sky-500/30 group-hover:scale-105 transition-transform">
+                    <i data-lucide="play" class="w-4 h-4 fill-slate-950 stroke-[2.5] ml-0.5"></i>
+                </div>
+                <div class="text-left flex items-center gap-2">
+                    <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-white">Watch<span class="text-sky-400">Order</span></span>
+                    <span class="hidden lg:inline-block text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/25">Cinema OS</span>
+                </div>
+            </button>
+
+            <!-- Center Mode Switcher Pill -->
+            <nav class="flex items-center bg-obsidian-950/90 p-1 rounded-full border border-slate-800/90">
+                <button
+                    id="navTabTimeline"
+                    onclick="switchAppView('timeline')"
+                    class="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-md shadow-sky-500/25 cursor-pointer"
+                >
+                    <i data-lucide="orbit" class="w-3.5 h-3.5"></i>
+                    <span>Universes</span>
+                </button>
+                <button
+                    id="navTabRecommend"
+                    onclick="switchAppView('recommend')"
+                    class="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white cursor-pointer"
+                >
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-400"></i>
+                    <span>AI Matchmaker</span>
+                </button>
+            </nav>
+
+            <!-- Right Telemetry & Progress Drawer Trigger -->
+            <div class="flex items-center gap-2">
+                <button
+                    onclick="toggleProgressDrawer()"
+                    class="flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-obsidian-900/90 hover:bg-obsidian-800 border border-sky-500/25 text-xs font-medium text-sky-200 transition-all cursor-pointer"
+                    title="View your tracked watch progress"
+                >
+                    <i data-lucide="bookmark-check" class="w-3.5 h-3.5 text-sky-400"></i>
+                    <span class="hidden sm:inline">My Progress</span>
+                    <span id="globalWatchedPill" class="font-mono text-[11px] px-1.5 py-0.2 rounded-full bg-sky-500/20 text-sky-300">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Slide-Over My Progress Drawer -->
+    <div id="progressDrawerBackdrop" onclick="toggleProgressDrawer()" class="hidden fixed inset-0 bg-obsidian-950/75 backdrop-blur-sm z-50 transition-opacity"></div>
+    <aside id="progressDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md glass-panel border-l border-sky-500/20 z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400">
+                    <i data-lucide="activity" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-display font-bold text-base text-white">Watch Telemetry</h3>
+                    <p class="text-[11px] text-slate-400">Synced locally across universes</p>
+                </div>
+            </div>
+            <button onclick="toggleProgressDrawer()" class="p-2 rounded-xl bg-slate-800/70 hover:bg-slate-700 text-slate-300 cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <div id="progressDrawerContent" class="flex-1 overflow-y-auto p-5 space-y-3">
+            <!-- Populated dynamically -->
+        </div>
+    </aside>
+
+    <!-- Poster Lightbox Modal -->
+    <div id="posterLightboxModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        <div onclick="closePosterLightbox()" class="absolute inset-0 bg-obsidian-950/85 backdrop-blur-md"></div>
+        <div class="relative z-10 max-w-2xl w-full glass-panel rounded-3xl border border-sky-400/30 p-5 sm:p-7 shadow-2xl shadow-blue-950/90 overflow-hidden">
+            <button onclick="closePosterLightbox()" class="absolute top-4 right-4 z-20 p-2 rounded-full bg-obsidian-950/80 hover:bg-sky-500 hover:text-slate-950 text-slate-300 border border-slate-700 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+            <div id="posterLightboxBody" class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Viewport -->
+    <main class="relative z-10 flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 pt-6 pb-16">
+
+        <!-- Status / Error Notification Toast -->
+        <div id="statusBanner" class="hidden max-w-3xl mx-auto mb-6 p-4 rounded-2xl bg-red-950/60 border border-red-500/40 text-red-200 text-sm flex items-start gap-3 backdrop-blur-md">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i>
+            <div class="flex-1">
+                <p id="statusBannerTitle" class="font-semibold text-red-300">Notice</p>
+                <p id="statusBannerMessage" class="text-xs text-red-200/80 mt-0.5"></p>
+            </div>
+            <button onclick="hideStatusBanner()" class="text-red-300 hover:text-white cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- ===================================================================== -->
+        <!-- VIEW 1: WATCH ORDER UNIVERSES & TIMELINES                             -->
+        <!-- ===================================================================== -->
+        <div id="viewTimelineContainer">
+
+            <!-- Command Search Bar + Hero Spotlight -->
+            <section id="heroSection" class="mb-10">
+                <!-- Omnibox Search Bar -->
+                <div class="max-w-3xl mx-auto mb-8 relative z-30">
+                    <form id="searchForm" onsubmit="handleSearchSubmit(event)" class="relative flex items-center group">
+                        <div class="absolute left-4 text-sky-400 pointer-events-none">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </div>
+                        <input
+                            type="text"
+                            id="searchInput"
+                            autocomplete="off"
+                            placeholder="Search any movie, K-drama, web series, or anime (e.g., Avengers, Reply 1988, Mirzapur, Dark)..."
+                            class="w-full bg-obsidian-900/90 border border-sky-500/30 focus:border-sky-400 text-white placeholder-slate-400 rounded-2xl pl-12 pr-32 py-4 text-sm sm:text-base shadow-2xl shadow-blue-950/70 focus:outline-none focus:ring-4 focus:ring-sky-500/15 transition-all"
+                        />
+                        <button
+                            type="button"
+                            id="clearSearchBtn"
+                            onclick="clearSearchInput()"
+                            class="hidden absolute right-28 text-slate-400 hover:text-white p-1.5 rounded-lg cursor-pointer"
+                            title="Clear search"
+                        >
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                        <button
+                            type="submit"
+                            class="absolute right-2 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-semibold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-sky-500/25 flex items-center gap-1.5 cursor-pointer"
+                        >
+                            <span>Decode</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+
+                    <!-- Live Autocomplete Dropdown -->
+                    <div id="autocompleteDropdown" class="hidden absolute left-0 right-0 mt-2 glass-panel rounded-2xl shadow-2xl overflow-hidden text-left divide-y divide-slate-800/80 max-h-80 overflow-y-auto">
+                    </div>
+                </div>
+
+                <!-- Featured Hero Spotlight Banner (Visible when browsing Home Directory) -->
+                <div id="featuredSpotlight" class="glass-panel rounded-3xl p-5 sm:p-7 relative overflow-hidden border border-sky-500/25 shadow-2xl shadow-blue-950/60">
+                    <div class="absolute -right-16 -bottom-16 w-80 h-80 bg-gradient-to-tl from-blue-600/25 via-sky-400/10 to-transparent rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10">
+                        <!-- Left Spotlight Poster + Info -->
+                        <div class="lg:col-span-7 flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                            <div id="spotlightPosterWrap" class="w-36 sm:w-44 shrink-0">
+                                <!-- Dynamic 2:3 Framed Poster injected via JS -->
+                            </div>
+                            <div class="space-y-3 text-center sm:text-left flex-1">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-[11px] font-mono uppercase tracking-wider">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping"></span>
+                                    <span>Spotlight Universe</span>
+                                </div>
+                                <h1 id="spotlightTitle" class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight leading-tight">
+                                    Marvel Cinematic Universe
+                                </h1>
+                                <p id="spotlightDesc" class="text-slate-300 text-xs sm:text-sm leading-relaxed line-clamp-3">
+                                    Stream 31 interconnected films and series in Release or Chronological order with OTT links and exact marathon runtime.
+                                </p>
+                                <div id="spotlightMeta" class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                                    <!-- Injected by JS -->
+                                </div>
+                                <div class="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+                                    <button id="spotlightActionBtn" onclick="selectPresetFranchise('mcu')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-sky-500/25 flex items-center gap-2 cursor-pointer transition-all">
+                                        <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                                        <span>Open Watch Timeline</span>
+                                    </button>
+                                    <button onclick="switchAppView('recommend')" class="px-4 py-2.5 rounded-xl bg-obsidian-900/90 hover:bg-obsidian-800 text-sky-300 border border-sky-500/25 font-semibold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-all">
+                                        <i data-lucide="wand-2" class="w-4 h-4"></i>
+                                        <span>Recommend Me Something</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Quick-Switch Spotlight Deck with Mini Posters -->
+                        <div class="lg:col-span-5 grid grid-cols-2 gap-2.5" id="spotlightDeck">
+                            <!-- 4 mini interactive spotlight cards injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Skeleton (AI Universe Search) -->
+            <section id="loadingSection" class="hidden max-w-4xl mx-auto my-8">
+                <div class="glass-panel rounded-3xl p-8 text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-sky-500/20">
+                        <i data-lucide="orbit" class="w-8 h-8 text-sky-400 animate-spin"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white mb-2" id="loadingTitle">Mapping Universe Timeline...</h3>
+                    <p class="text-sm text-slate-400 max-w-md mx-auto mb-6">
+                        Calculating episode runtimes, Indian OTT streaming availability, posters, and chronological watch order.
+                    </p>
+                    <div class="space-y-3 max-w-2xl mx-auto">
+                        <div class="h-16 bg-obsidian-800/70 rounded-2xl animate-pulse"></div>
+                        <div class="h-16 bg-obsidian-800/50 rounded-2xl animate-pulse"></div>
+                        <div class="h-16 bg-obsidian-800/30 rounded-2xl animate-pulse"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================= -->
+            <!-- FRANCHISE / SERIES WATCH ORDER VIEW (Dual-Pane Theater Layout)    -->
+            <!-- ================================================================= -->
+            <section id="resultsSection" class="hidden">
+                <!-- Back Breadcrumb -->
+                <div class="mb-4 flex items-center justify-between">
+                    <button onclick="resetToHome()" class="inline-flex items-center gap-2 text-xs font-semibold text-sky-300 hover:text-white bg-obsidian-900/90 hover:bg-obsidian-800 border border-sky-500/25 px-3.5 py-2 rounded-xl transition-all cursor-pointer">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                        <span>All Universes & Series</span>
+                    </button>
+                    <span id="franchiseSourceBadge" class="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider px-3 py-1 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Verified Guide
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                    <!-- LEFT PANE: Sticky Telemetry & Control Console (4 Cols) -->
+                    <aside class="lg:col-span-4 lg:sticky lg:top-22 space-y-4">
+                        <div class="glass-panel rounded-3xl p-5 sm:p-6 relative overflow-hidden">
+                            <div class="absolute -top-20 -right-20 w-44 h-44 bg-sky-500/15 rounded-full blur-2xl pointer-events-none"></div>
+
+                            <!-- Franchise Poster + Header -->
+                            <div class="flex items-start gap-4 mb-4">
+                                <div id="consoleFranchisePoster" class="w-24 sm:w-28 shrink-0">
+                                    <!-- Main Franchise 2:3 Poster injected here -->
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <span id="franchiseCategoryBadge" class="inline-block text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-500/20 text-sky-300 border border-sky-400/25 mb-2">
+                                        Category
+                                    </span>
+                                    <h2 id="franchiseTitle" class="font-display font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-snug">
+                                        Franchise Title
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <p id="franchiseSynopsis" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5">
+                                Synopsis goes here.
+                            </p>
+
+                            <!-- Circular Progress Ring + Time Telemetry -->
+                            <div class="bg-obsidian-950/85 border border-slate-800/90 rounded-2xl p-4 mb-5 flex items-center gap-4">
+                                <div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                                    <svg class="w-16 h-16" viewBox="0 0 64 64">
+                                        <circle cx="32" cy="32" r="26" stroke="#1e293b" stroke-width="5" fill="none" />
+                                        <circle id="progressRingCircle" class="progress-ring-circle" cx="32" cy="32" r="26" stroke="url(#skyGrad)" stroke-width="5" stroke-linecap="round" fill="none" stroke-dasharray="163.36" stroke-dashoffset="163.36" />
+                                        <defs>
+                                            <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stop-color="#38bdf8" />
+                                                <stop offset="100%" stop-color="#2563eb" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    <span id="progressPercentText" class="absolute font-mono font-bold text-xs text-sky-300">0%</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-xs font-semibold text-white" id="progressCountText">0 of 0 Watched</div>
+                                    <div class="text-[11px] text-slate-400 mt-0.5" id="statBreakdown">0 Movies • 0 Series</div>
+                                    <button onclick="resetFranchiseProgress()" class="text-[11px] text-sky-400 hover:text-sky-300 underline mt-1 cursor-pointer">Reset checklist</button>
+                                </div>
+                            </div>
+
+                            <!-- Runtime Stats Grid -->
+                            <div class="grid grid-cols-2 gap-2.5 mb-5">
+                                <div class="bg-obsidian-950/75 border border-slate-800/80 rounded-2xl p-3">
+                                    <div class="text-[11px] text-slate-400 flex items-center gap-1 mb-1">
+                                        <i data-lucide="clock" class="w-3 h-3 text-sky-400"></i>
+                                        <span>Total Time</span>
+                                    </div>
+                                    <div id="statRuntime" class="font-mono font-bold text-sm sm:text-base text-white">0h 0m</div>
+                                </div>
+                                <div class="bg-obsidian-950/75 border border-slate-800/80 rounded-2xl p-3">
+                                    <div class="text-[11px] text-slate-400 flex items-center gap-1 mb-1">
+                                        <i data-lucide="hourglass" class="w-3 h-3 text-cyan-400"></i>
+                                        <span>Remaining</span>
+                                    </div>
+                                    <div id="statRemainingRuntime" class="font-mono font-bold text-sm sm:text-base text-sky-300">0h 0m</div>
+                                </div>
+                            </div>
+
+                            <!-- Watch Order Mode Switcher -->
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">Timeline Sequence</label>
+                                <div class="grid grid-cols-2 gap-1.5 p-1 bg-obsidian-950 border border-slate-800 rounded-xl">
+                                    <button
+                                        id="btnOrderRelease"
+                                        onclick="setWatchOrderMode('release')"
+                                        class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow cursor-pointer"
+                                    >
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                        <span>Release</span>
+                                    </button>
+                                    <button
+                                        id="btnOrderChronological"
+                                        onclick="setWatchOrderMode('chronological')"
+                                        class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white cursor-pointer"
+                                    >
+                                        <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+                                        <span>Chronological</span>
+                                    </button>
+                                </div>
+                                <p id="orderGuidanceText" class="text-[11px] text-slate-400 leading-relaxed pt-1">
+                                    <strong>Release Order</strong> preserves original plot twists and reveals.
+                                </p>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- RIGHT PANE: Filter Bar & Luminous Constellation Timeline (8 Cols) -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <!-- Filter Bar (Type + Indian OTT Dropdown) -->
+                        <div class="glass-panel rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                                <button onclick="setTypeFilter('all')" id="filterAll" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/40 whitespace-nowrap cursor-pointer">
+                                    All (<span id="countAll">0</span>)
+                                </button>
+                                <button onclick="setTypeFilter('movie')" id="filterMovie" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-obsidian-950/80 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap cursor-pointer">
+                                    Movies (<span id="countMovie">0</span>)
+                                </button>
+                                <button onclick="setTypeFilter('series')" id="filterSeries" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-obsidian-950/80 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap cursor-pointer">
+                                    Series & Dramas (<span id="countSeries">0</span>)
+                                </button>
+                            </div>
+
+                            <!-- OTT Platform Filter -->
+                            <div class="flex items-center gap-2 shrink-0">
+                                <i data-lucide="tv" class="w-3.5 h-3.5 text-sky-400"></i>
+                                <select id="ottFilterSelect" onchange="setOttFilter(this.value)" class="bg-obsidian-950 border border-slate-800 focus:border-sky-400 text-xs text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer">
+                                    <option value="all">All OTT Platforms</option>
+                                    <option value="JioHotstar">JioHotstar</option>
+                                    <option value="Netflix">Netflix</option>
+                                    <option value="Amazon Prime Video">Amazon Prime Video</option>
+                                    <option value="Apple TV+">Apple TV+</option>
+                                    <option value="SonyLIV">SonyLIV</option>
+                                    <option value="Crunchyroll">Crunchyroll</option>
+                                    <option value="Viki">Rakuten Viki</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Constellation Timeline Items -->
+                        <div id="timelineContainer" class="space-y-3.5 relative">
+                            <!-- Timeline cards injected via JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ================================================================= -->
+            <!-- BENTO UNIVERSE & DRAMA DIRECTORY GRID                             -->
+            <!-- ================================================================= -->
+            <section id="directorySection" class="space-y-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="font-display font-bold text-xl sm:text-2xl text-white flex items-center gap-2">
+                            <span>Explore Universes, Dramas & Series</span>
+                            <span id="directoryCountPill" class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">28</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Select any universe for complete watch orders, posters, episode runtimes & OTT streaming links.</p>
+                    </div>
+
+                    <!-- Category Filter Pills -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0">
+                        <button onclick="setDirectoryCategory('all')" id="dirCat-all" class="dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow cursor-pointer whitespace-nowrap">
+                            All
+                        </button>
+                        <button onclick="setDirectoryCategory('movies')" id="dirCat-movies" class="dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900/90 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap">
+                            Movie Sagas
+                        </button>
+                        <button onclick="setDirectoryCategory('dramas')" id="dirCat-dramas" class="dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900/90 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap">
+                            Global Dramas
+                        </button>
+                        <button onclick="setDirectoryCategory('kdrama')" id="dirCat-kdrama" class="dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900/90 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap">
+                            K-Dramas
+                        </button>
+                        <button onclick="setDirectoryCategory('indian')" id="dirCat-indian" class="dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900/90 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap">
+                            Indian Series
+                        </button>
+                        <button onclick="setDirectoryCategory('anime')" id="dirCat-anime" class="dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900/90 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap">
+                            Anime
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bento Grid -->
+                <div id="directoryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Injected via JS -->
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ===================================================================== -->
+        <!-- VIEW 2: AI MATCHMAKER (MOVIES, DRAMAS & SERIES RECOMMENDER)           -->
+        <!-- ===================================================================== -->
+        <div id="viewRecommendContainer" class="hidden space-y-8">
+            <section class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden border border-sky-500/25">
+                <div class="absolute -top-24 -left-24 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="max-w-3xl mx-auto text-center space-y-3 relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-xs font-mono">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>AI CINEMA & DRAMA CURATOR</span>
+                    </div>
+                    <h2 class="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight">
+                        Tell me your mood, get your next <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-blue-400">binge-worthy watch</span>.
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-300">
+                        Ask for mind-bending sci-fi movies, heartwarming K-dramas, gritty Indian crime thrillers, or epic anime—complete with posters, runtime & Indian OTT availability.
+                    </p>
+
+                    <!-- Format Selector Pills -->
+                    <div class="flex flex-wrap items-center justify-center gap-1.5 pt-2">
+                        <button onclick="setRecFormat('All Formats')" id="recFmt-All Formats" class="rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow cursor-pointer">
+                            All Formats
+                        </button>
+                        <button onclick="setRecFormat('Movies')" id="recFmt-Movies" class="rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer">
+                            Movies
+                        </button>
+                        <button onclick="setRecFormat('TV Series & Dramas')" id="recFmt-TV Series & Dramas" class="rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer">
+                            TV Series & Dramas
+                        </button>
+                        <button onclick="setRecFormat('K-Dramas')" id="recFmt-K-Dramas" class="rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer">
+                            K-Dramas
+                        </button>
+                        <button onclick="setRecFormat('Indian Web Series')" id="recFmt-Indian Web Series" class="rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer">
+                            Indian Web Series
+                        </button>
+                        <button onclick="setRecFormat('Anime')" id="recFmt-Anime" class="rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer">
+                            Anime
+                        </button>
+                    </div>
+
+                    <!-- Recommender Prompt Input -->
+                    <form onsubmit="handleRecommendSubmit(event)" class="relative flex items-center max-w-2xl mx-auto pt-2">
+                        <input
+                            type="text"
+                            id="recommendInput"
+                            placeholder="e.g., Emotional slice-of-life K-drama like Reply 1988, or twisty sci-fi thriller under 2.5 hrs..."
+                            class="w-full bg-obsidian-950/90 border border-sky-500/30 focus:border-sky-400 text-white placeholder-slate-500 rounded-2xl pl-4 pr-36 py-3.5 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-sky-500/15"
+                        />
+                        <button type="submit" class="absolute right-2 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-lg shadow-sky-500/25 flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            <span>Recommend</span>
+                        </button>
+                    </form>
+
+                    <!-- Mood Chips -->
+                    <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
+                        <button onclick="triggerQuickRecommend('Mind-bending sci-fi movies & series with huge plot twists')" class="text-[11px] px-3 py-1 rounded-full bg-obsidian-900/90 hover:bg-sky-500/15 text-sky-300 border border-slate-800 hover:border-sky-400/40 transition-all cursor-pointer">
+                            🧠 Mind-Bending Twists
+                        </button>
+                        <button onclick="triggerQuickRecommend('Heartwarming slice-of-life K-dramas about friendship and family')" class="text-[11px] px-3 py-1 rounded-full bg-obsidian-900/90 hover:bg-sky-500/15 text-sky-300 border border-slate-800 hover:border-sky-400/40 transition-all cursor-pointer">
+                            🌸 Comfort K-Dramas
+                        </button>
+                        <button onclick="triggerQuickRecommend('Gripping Indian espionage and crime thriller web series')" class="text-[11px] px-3 py-1 rounded-full bg-obsidian-900/90 hover:bg-sky-500/15 text-sky-300 border border-slate-800 hover:border-sky-400/40 transition-all cursor-pointer">
+                            🇮🇳 Indian Crime & Spy
+                        </button>
+                        <button onclick="triggerQuickRecommend('High-octane action movies with incredible choreography')" class="text-[11px] px-3 py-1 rounded-full bg-obsidian-900/90 hover:bg-sky-500/15 text-sky-300 border border-slate-800 hover:border-sky-400/40 transition-all cursor-pointer">
+                            ⚡ Adrenaline Action
+                        </button>
+                        <button onclick="triggerQuickRecommend('Dark fantasy anime with deep world-building and emotional stakes')" class="text-[11px] px-3 py-1 rounded-full bg-obsidian-900/90 hover:bg-sky-500/15 text-sky-300 border border-slate-800 hover:border-sky-400/40 transition-all cursor-pointer">
+                            ⚔️ Epic Dark Anime
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading State for Recommendations -->
+            <div id="recommendLoading" class="hidden glass-panel rounded-3xl p-8 text-center">
+                <i data-lucide="sparkles" class="w-8 h-8 text-sky-400 animate-spin mx-auto mb-3"></i>
+                <p class="font-display font-bold text-lg text-white">Curating personalized picks & posters...</p>
+                <p class="text-xs text-slate-400 mt-1">Matching ratings, runtimes, and Indian OTT streaming availability.</p>
+            </div>
+
+            <!-- Recommendations Results Grid -->
+            <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 id="recommendHeading" class="font-display font-bold text-lg sm:text-xl text-white">Editor's Top Picks Across Cinema, Dramas & Series</h3>
+                    <span class="text-xs font-mono text-sky-400" id="recommendSubtag">Curated Selection</span>
+                </div>
+                <div id="recommendGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Injected via JS -->
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-slate-800/70 bg-obsidian-950/90 py-6 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                <span><strong class="text-slate-300">WatchOrder</strong> — Movies, Dramas, K-Dramas, Series & Anime Watch Guide</span>
+            </div>
+            <span>Dynamic Poster Engine • Runtime Telemetry • Indian OTT Availability</span>
+        </div>
+    </footer>
+
+    <script>
+        // =========================================================================
+        // 1. MULTI-SOURCE POSTER ENGINE (iTunes + TVmaze + Jikan + SVG Fallbacks)
+        // =========================================================================
+        const POSTER_CACHE_KEY = 'watchorder_poster_cache_v1';
+        let posterCache = {};
+        try {
+            posterCache = JSON.parse(localStorage.getItem(POSTER_CACHE_KEY) || '{}');
+        } catch (e) {
+            posterCache = {};
+        }
+
+        const inFlightPosterRequests = new Map();
+        const posterDomRegistry = new Map(); // cacheKey -> Set<elementId>
+        const posterMetadataRegistry = new Map(); // itemKey -> metadata for Lightbox
+
+        function savePosterCache() {
+            try {
+                // Keep cache bounded to ~450 entries
+                const keys = Object.keys(posterCache);
+                if (keys.length > 450) {
+                    keys.slice(0, keys.length - 450).forEach(k => delete posterCache[k]);
+                }
+                localStorage.setItem(POSTER_CACHE_KEY, JSON.stringify(posterCache));
+            } catch (e) {}
+        }
+
+        function cleanTitleForSearch(rawTitle) {
+            return rawTitle
+                .replace(/\([^)]*\)/g, '') // remove parentheticals like (Seasons 1-2) or (Nolan Trilogy)
+                .replace(/:\s*(Season|Part|Vol\.|Chapter|Episode|The Complete).*$/i, '')
+                .replace(/\s+-\s+(Part|Season|Special).*$/i, '')
+                .replace(/&/g, 'and')
+                .trim();
+        }
+
+        function getPosterCacheKey(title, type = 'Movie') {
+            return `${cleanTitleForSearch(title).toLowerCase()}::${(type || 'movie').toLowerCase()}`;
+        }
+
+        // Generates a bespoke 2:3 theatrical illustrated poster fallback (never broken)
+        function buildIllustratedPosterHTML(title, year = '', type = 'Movie', ottList = [], accentIndex = 0) {
+            const palettes = [
+                { bg1: '#0f294a', bg2: '#050b1a', glow: '#38bdf8', badge: 'bg-sky-500/20 text-sky-300 border-sky-400/30' },
+                { bg1: '#172554', bg2: '#040817', glow: '#60a5fa', badge: 'bg-blue-500/20 text-blue-300 border-blue-400/30' },
+                { bg1: '#0c3547', bg2: '#040a14', glow: '#22d3ee', badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-400/30' },
+                { bg1: '#1e1b4b', bg2: '#050714', glow: '#818cf8', badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-400/30' }
+            ];
+            let hash = 0;
+            for (let i = 0; i < title.length; i++) hash = title.charCodeAt(i) + ((hash << 5) - hash);
+            const pal = palettes[Math.abs(hash + accentIndex) % palettes.length];
+            const primaryOtt = (ottList && ottList.length > 0) ? ottList[0] : (type.toUpperCase());
+
+            return `
+                <div class="w-full h-full flex flex-col justify-between p-2.5 sm:p-3 relative overflow-hidden select-none poster-grain"
+                     style="background: radial-gradient(circle at 75% 20%, ${pal.bg1} 0%, ${pal.bg2} 85%);">
+                    <!-- Decorative Cinematic Lens Rings -->
+                    <svg class="absolute -right-6 -bottom-6 w-28 h-28 opacity-20 pointer-events-none" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="42" stroke="${pal.glow}" stroke-width="1.5" stroke-dasharray="6 4"/>
+                        <circle cx="50" cy="50" r="28" stroke="${pal.glow}" stroke-width="1"/>
+                        <path d="M50 8V92M8 50H92" stroke="${pal.glow}" stroke-width="0.75" opacity="0.6"/>
+                    </svg>
+
+                    <!-- Top Studio / OTT Tag -->
+                    <div class="relative z-10 flex items-center justify-between gap-1">
+                        <span class="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border ${pal.badge} truncate max-w-full">
+                            ${escapeHtml(primaryOtt)}
+                        </span>
+                    </div>
+
+                    <!-- Center Cinematic Emblem -->
+                    <div class="relative z-10 my-auto py-1">
+                        <div class="w-6 h-0.5 rounded-full mb-1.5" style="background:${pal.glow}"></div>
+                        <div class="font-display font-extrabold text-[11px] sm:text-xs text-white leading-tight line-clamp-3 drop-shadow">
+                            ${escapeHtml(title)}
+                        </div>
+                    </div>
+
+                    <!-- Bottom Billing Block -->
+                    <div class="relative z-10 flex items-center justify-between text-[9px] font-mono text-slate-400 border-t border-white/10 pt-1">
+                        <span>${year || 'HD'}</span>
+                        <span class="uppercase text-[8px] text-sky-300/80">${escapeHtml(type.split(' ')[0])}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Renders a 2:3 poster container and triggers async real poster resolution
+        function renderPosterBox({ title, year = '', type = 'Movie', ott = [], sizeClass = 'w-full', rimGlow = false, clickableData = null }) {
+            const cacheKey = getPosterCacheKey(title, type);
+            const domId = `poster-${Math.random().toString(36).slice(2, 10)}`;
+            const cachedUrl = posterCache[cacheKey];
+
+            if (!posterDomRegistry.has(cacheKey)) {
+                posterDomRegistry.set(cacheKey, new Set());
+            }
+            posterDomRegistry.get(cacheKey).add(domId);
+
+            let clickAttr = '';
+            if (clickableData) {
+                const metaKey = `meta-${Math.random().toString(36).slice(2, 10)}`;
+                posterMetadataRegistry.set(metaKey, { ...clickableData, cacheKey });
+                clickAttr = `onclick="event.stopPropagation(); openPosterLightbox('${metaKey}')" title="Inspect poster & details"`;
+            }
+
+            // Trigger background fetch if not already resolved
+            if (cachedUrl === undefined) {
+                resolvePosterUrl(title, year, type, cacheKey);
+            }
+
+            const imgHtml = (cachedUrl && cachedUrl !== 'NONE')
+                ? `<img src="${escapeHtml(cachedUrl)}" alt="${escapeHtml(title)} Poster" loading="lazy" onload="this.classList.add('loaded')" onerror="handlePosterImgError(this, '${cacheKey}')" class="poster-img-fade loaded absolute inset-0 w-full h-full object-cover z-20" />`
+                : '';
+
+            return `
+                <div id="${domId}" ${clickAttr} class="poster-frame ${sizeClass} ${rimGlow ? 'poster-rim-glow' : ''} ${clickableData ? 'cursor-pointer group/poster' : ''} shrink-0">
+                    ${buildIllustratedPosterHTML(title, year, type, ott)}
+                    ${imgHtml}
+                    ${clickableData ? `
+                        <div class="absolute inset-0 z-30 bg-obsidian-950/50 opacity-0 group-hover/poster:opacity-100 transition-opacity flex items-center justify-center">
+                            <span class="p-1.5 rounded-full bg-sky-500 text-slate-950 shadow-lg">
+                                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                            </span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function handlePosterImgError(imgEl, cacheKey) {
+            imgEl.remove();
+            posterCache[cacheKey] = 'NONE';
+            savePosterCache();
+        }
+
+        function injectResolvedPosterIntoDom(cacheKey, url) {
+            if (!url || url === 'NONE') return;
+            const domIds = posterDomRegistry.get(cacheKey);
+            if (!domIds) return;
+            domIds.forEach(id => {
+                const container = document.getElementById(id);
+                if (container && !container.querySelector('img')) {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Poster';
+                    img.loading = 'lazy';
+                    img.className = 'poster-img-fade absolute inset-0 w-full h-full object-cover z-20';
+                    img.onload = () => img.classList.add('loaded');
+                    img.onerror = () => handlePosterImgError(img, cacheKey);
+                    container.appendChild(img);
+                }
+            });
+        }
+
+        async function resolvePosterUrl(rawTitle, year, type, cacheKey) {
+            if (posterCache[cacheKey] !== undefined) return posterCache[cacheKey];
+            if (inFlightPosterRequests.has(cacheKey)) return inFlightPosterRequests.get(cacheKey);
+
+            const cleanQuery = cleanTitleForSearch(rawTitle);
+            const tLower = (type || '').toLowerCase();
+            const isAnime = tLower.includes('anime') || tLower.includes('ova');
+            const isSeries = tLower.includes('series') || tLower.includes('drama') || tLower.includes('special');
+
+            const fetchPromise = (async () => {
+                let foundUrl = null;
+
+                // 1. If Anime, try Jikan MyAnimeList API first
+                if (isAnime) {
+                    try {
+                        const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(cleanQuery)}&limit=1`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            const img = data?.data?.[0]?.images?.jpg?.large_image_url || data?.data?.[0]?.images?.jpg?.image_url;
+                            if (img) foundUrl = img;
+                        }
+                    } catch (e) {}
+                }
+
+                // 2. If TV Series / K-Drama / Drama (or Anime fallback), try TVmaze public CORS API
+                if (!foundUrl && (isSeries || isAnime)) {
+                    try {
+                        const res = await fetch(`https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(cleanQuery)}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            const img = data?.image?.original || data?.image?.medium;
+                            if (img) foundUrl = img;
+                        }
+                    } catch (e) {}
+                }
+
+                // 3. Query iTunes Search API (works great for Movies & Major TV Shows; upgrade to 600x600bb)
+                if (!foundUrl) {
+                    try {
+                        const mediaParam = isSeries ? 'tvShow' : 'movie';
+                        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(cleanQuery)}&media=${mediaParam}&limit=3`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data?.results?.length > 0) {
+                                // Prefer year match if available
+                                let best = data.results[0];
+                                if (year) {
+                                    const yrMatch = data.results.find(r => r.releaseDate && r.releaseDate.startsWith(String(year)));
+                                    if (yrMatch) best = yrMatch;
+                                }
+                                if (best.artworkUrl100) {
+                                    foundUrl = best.artworkUrl100.replace('100x100bb', '600x600bb');
+                                }
+                            }
+                        }
+                    } catch (e) {}
+                }
+
+                // 4. Cross-media fallback on iTunes (if searched as movie, try tvShow or vice-versa)
+                if (!foundUrl) {
+                    try {
+                        const altMedia = isSeries ? 'movie' : 'tvShow';
+                        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(cleanQuery)}&media=${altMedia}&limit=1`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            const art = data?.results?.[0]?.artworkUrl100;
+                            if (art) foundUrl = art.replace('100x100bb', '600x600bb');
+                        }
+                    } catch (e) {}
+                }
+
+                posterCache[cacheKey] = foundUrl || 'NONE';
+                savePosterCache();
+                inFlightPosterRequests.delete(cacheKey);
+
+                if (foundUrl) {
+                    injectResolvedPosterIntoDom(cacheKey, foundUrl);
+                }
+                return foundUrl;
+            })();
+
+            inFlightPosterRequests.set(cacheKey, fetchPromise);
+            return fetchPromise;
+        }
+
+        // Poster Lightbox Modal Controls
+        function openPosterLightbox(metaKey) {
+            const data = posterMetadataRegistry.get(metaKey);
+            if (!data) return;
+
+            const modal = document.getElementById('posterLightboxModal');
+            const body = document.getElementById('posterLightboxBody');
+            const isWatched = data.itemId ? state.watchedIds.has(data.itemId) : false;
+
+            const posterHtml = renderPosterBox({
+                title: data.title,
+                year: data.year,
+                type: data.type,
+                ott: data.ott || [],
+                sizeClass: 'w-44 sm:w-full mx-auto',
+                rimGlow: true
+            });
+
+            body.innerHTML = `
+                <div class="sm:col-span-5">
+                    ${posterHtml}
+                </div>
+                <div class="sm:col-span-7 space-y-3 text-left">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">
+                            ${escapeHtml(data.type || 'Title')}
+                        </span>
+                        ${data.year ? `<span class="text-xs font-mono text-slate-400">${data.year}</span>` : ''}
+                        ${data.duration ? `<span class="text-xs font-mono text-sky-300">• ${escapeHtml(data.duration)}</span>` : ''}
+                    </div>
+                    <h3 class="font-display font-extrabold text-xl sm:text-2xl text-white leading-tight">
+                        ${escapeHtml(data.title)}
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        ${escapeHtml(data.note || data.synopsis || '')}
+                    </p>
+                    <div class="pt-1">
+                        <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">Streaming On (India)</div>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${renderOttBadges(data.ott || ['Digital / OTT'])}
+                        </div>
+                    </div>
+                    <div class="pt-3 flex flex-wrap gap-2">
+                        ${data.itemId ? `
+                            <button onclick="toggleItemWatched('${data.itemId}'); openPosterLightbox('${metaKey}')" class="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
+                                isWatched
+                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
+                                    : 'bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-lg shadow-sky-500/25'
+                            }">
+                                <i data-lucide="${isWatched ? 'check-circle-2' : 'circle'}" class="w-4 h-4"></i>
+                                <span>${isWatched ? 'Watched' : 'Mark as Watched'}</span>
+                            </button>
+                        ` : ''}
+                        ${data.franchiseId ? `
+                            <button onclick="closePosterLightbox(); selectPresetFranchise('${data.franchiseId}')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-lg shadow-sky-500/25 flex items-center gap-1.5 cursor-pointer">
+                                <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                                <span>Open Watch Order</span>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closePosterLightbox() {
+            document.getElementById('posterLightboxModal').classList.add('hidden');
+        }
+
+        // =========================================================================
+        // 2. CURATED FRANCHISE, DRAMA, K-DRAMA, INDIAN SERIES & ANIME DATABASE
+        // =========================================================================
+        const FRANCHISE_DB = [
+            // --- MOVIE UNIVERSES ---
+            {
+                id: "mcu",
+                title: "Marvel Cinematic Universe (MCU)",
+                posterQuery: "Avengers Endgame",
+                group: "movies",
+                category: "Superhero / Sci-Fi",
+                ott: ["JioHotstar"],
+                aliases: ["marvel", "avengers", "iron man", "captain america", "thor", "endgame", "infinity war", "loki", "wandavision", "guardians", "black panther", "doctor strange", "deadpool"],
+                synopsis: "Earth's Mightiest Heroes and cosmic defenders unite across interconnected films and series spanning the Infinity Saga and Multiverse Saga.",
+                items: [
+                    { id: "mcu-1", title: "Iron Man", year: 2008, type: "Movie", mins: 126, duration: "2h 06m", ott: ["JioHotstar"], releaseRank: 1, chronoRank: 3, note: "Tony Stark builds his first armored suit and launches the MCU." },
+                    { id: "mcu-2", title: "The Incredible Hulk", year: 2008, type: "Movie", mins: 112, duration: "1h 52m", ott: ["JioHotstar", "Amazon Prime Video"], releaseRank: 2, chronoRank: 5, note: "Bruce Banner evades capture while facing the Abomination." },
+                    { id: "mcu-3", title: "Iron Man 2", year: 2010, type: "Movie", mins: 124, duration: "2h 04m", ott: ["JioHotstar"], releaseRank: 3, chronoRank: 4, note: "Introduces Natasha Romanoff (Black Widow) and War Machine." },
+                    { id: "mcu-4", title: "Thor", year: 2011, type: "Movie", mins: 115, duration: "1h 55m", ott: ["JioHotstar"], releaseRank: 4, chronoRank: 6, note: "Banished to Earth, the God of Thunder learns humility while Loki schemes." },
+                    { id: "mcu-5", title: "Captain America: The First Avenger", year: 2011, type: "Movie", mins: 124, duration: "2h 04m", ott: ["JioHotstar"], releaseRank: 5, chronoRank: 1, note: "Set during WWII; Steve Rogers becomes the super-soldier Captain America." },
+                    { id: "mcu-6", title: "The Avengers", year: 2012, type: "Movie", mins: 143, duration: "2h 23m", ott: ["JioHotstar"], releaseRank: 6, chronoRank: 7, note: "Nick Fury assembles Earth's heroes to stop Loki's Chitauri invasion." },
+                    { id: "mcu-7", title: "Captain America: The Winter Soldier", year: 2014, type: "Movie", mins: 136, duration: "2h 16m", ott: ["JioHotstar"], releaseRank: 9, chronoRank: 10, note: "S.H.I.E.L.D. falls from within as Steve faces his brainwashed friend Bucky." },
+                    { id: "mcu-8", title: "Guardians of the Galaxy", year: 2014, type: "Movie", mins: 121, duration: "2h 01m", ott: ["JioHotstar"], releaseRank: 10, chronoRank: 11, note: "A ragtag cosmic crew bands together to protect the Power Stone." },
+                    { id: "mcu-9", title: "Avengers: Age of Ultron", year: 2015, type: "Movie", mins: 141, duration: "2h 21m", ott: ["JioHotstar"], releaseRank: 11, chronoRank: 13, note: "Tony's AI Ultron goes rogue; introduces Scarlet Witch and Vision." },
+                    { id: "mcu-10", title: "Captain America: Civil War", year: 2016, type: "Movie", mins: 147, duration: "2h 27m", ott: ["JioHotstar"], releaseRank: 13, chronoRank: 15, note: "The Sokovia Accords fracture the Avengers; debuts Black Panther & Spider-Man." },
+                    { id: "mcu-11", title: "Doctor Strange", year: 2016, type: "Movie", mins: 115, duration: "1h 55m", ott: ["JioHotstar"], releaseRank: 14, chronoRank: 19, note: "Stephen Strange masters the Mystic Arts and the Time Stone." },
+                    { id: "mcu-12", title: "Thor: Ragnarok", year: 2017, type: "Movie", mins: 130, duration: "2h 10m", ott: ["JioHotstar"], releaseRank: 17, chronoRank: 20, note: "Thor and Hulk escape Sakaar to confront Hela and prevent Ragnarok." },
+                    { id: "mcu-13", title: "Black Panther", year: 2018, type: "Movie", mins: 134, duration: "2h 14m", ott: ["JioHotstar"], releaseRank: 18, chronoRank: 17, note: "T'Challa returns to Wakanda to claim the throne against Killmonger." },
+                    { id: "mcu-14", title: "Captain Marvel", year: 2019, type: "Movie", mins: 123, duration: "2h 03m", ott: ["JioHotstar"], releaseRank: 21, chronoRank: 2, note: "Set in 1995; Carol Danvers unlocks her cosmic powers alongside young Nick Fury." },
+                    { id: "mcu-15", title: "Avengers: Infinity War", year: 2018, type: "Movie", mins: 149, duration: "2h 29m", ott: ["JioHotstar"], releaseRank: 19, chronoRank: 22, note: "Thanos hunts all six Infinity Stones in a devastating clash." },
+                    { id: "mcu-16", title: "Avengers: Endgame", year: 2019, type: "Movie", mins: 181, duration: "3h 01m", ott: ["JioHotstar"], releaseRank: 22, chronoRank: 23, note: "The surviving Avengers execute a Time Heist to undo the Blip." },
+                    { id: "mcu-17", title: "Loki (Seasons 1–2)", year: 2021, type: "TV Series", mins: 600, duration: "12 Episodes • ~50m", ott: ["JioHotstar"], releaseRank: 25, chronoRank: 24, note: "Branches directly from Endgame; introduces the TVA and Kang variants." },
+                    { id: "mcu-18", title: "WandaVision", year: 2021, type: "TV Series", mins: 350, duration: "9 Episodes • ~38m", ott: ["JioHotstar"], releaseRank: 23, chronoRank: 25, note: "Set weeks after Endgame; Wanda's grief reshapes Westview into sitcom reality." },
+                    { id: "mcu-19", title: "Spider-Man: No Way Home", year: 2021, type: "Movie", mins: 148, duration: "2h 28m", ott: ["Netflix", "Amazon Prime Video"], releaseRank: 27, chronoRank: 28, note: "Doctor Strange's spell fractures the multiverse, uniting three Spider-Men." },
+                    { id: "mcu-20", title: "Deadpool & Wolverine", year: 2024, type: "Movie", mins: 128, duration: "2h 08m", ott: ["JioHotstar"], releaseRank: 30, chronoRank: 31, note: "Wade Wilson teams up with Logan to save his timeline via the TVA." }
+                ]
+            },
+            {
+                id: "star-wars",
+                title: "Star Wars Saga",
+                posterQuery: "Star Wars The Empire Strikes Back",
+                group: "movies",
+                category: "Space Opera / Sci-Fi",
+                ott: ["JioHotstar"],
+                aliases: ["star wars", "mandalorian", "clone wars", "obi-wan", "andor", "rogue one", "skywalker", "darth vader", "ahsoka"],
+                synopsis: "A galaxy far, far away chronicling the rise and fall of the Jedi Order, the Galactic Empire, and the Skywalker bloodline.",
+                items: [
+                    { id: "sw-1", title: "Star Wars: Episode I – The Phantom Menace", year: 1999, type: "Movie", mins: 136, duration: "2h 16m", ott: ["JioHotstar"], releaseRank: 4, chronoRank: 1, note: "Qui-Gon Jinn discovers young Anakin Skywalker on Tatooine." },
+                    { id: "sw-2", title: "Star Wars: Episode II – Attack of the Clones", year: 2002, type: "Movie", mins: 142, duration: "2h 22m", ott: ["JioHotstar"], releaseRank: 5, chronoRank: 2, note: "The Clone Wars erupt as Anakin and Padmé fall into a forbidden romance." },
+                    { id: "sw-3", title: "Star Wars: The Clone Wars", year: 2008, type: "TV Series", mins: 2926, duration: "133 Episodes • ~22m", ott: ["JioHotstar"], releaseRank: 7, chronoRank: 3, note: "Bridges Episodes II & III; introduces Ahsoka Tano." },
+                    { id: "sw-4", title: "Star Wars: Episode III – Revenge of the Sith", year: 2005, type: "Movie", mins: 140, duration: "2h 20m", ott: ["JioHotstar"], releaseRank: 6, chronoRank: 4, note: "Order 66 wipes out the Jedi and Anakin becomes Darth Vader." },
+                    { id: "sw-5", title: "Obi-Wan Kenobi", year: 2022, type: "TV Series", mins: 270, duration: "6 Episodes • ~45m", ott: ["JioHotstar"], releaseRank: 14, chronoRank: 7, note: "Set 10 years after Episode III; Obi-Wan watches over young Luke." },
+                    { id: "sw-6", title: "Andor", year: 2022, type: "TV Series", mins: 540, duration: "12 Episodes • ~45m", ott: ["JioHotstar"], releaseRank: 15, chronoRank: 8, note: "Grounded thriller showing how Cassian Andor joins the Rebellion." },
+                    { id: "sw-7", title: "Rogue One: A Star Wars Story", year: 2016, type: "Movie", mins: 133, duration: "2h 13m", ott: ["JioHotstar"], releaseRank: 9, chronoRank: 10, note: "Leads directly into Episode IV as rebels steal the Death Star plans." },
+                    { id: "sw-8", title: "Star Wars: Episode IV – A New Hope", year: 1977, type: "Movie", mins: 121, duration: "2h 01m", ott: ["JioHotstar"], releaseRank: 1, chronoRank: 11, note: "Luke Skywalker, Han Solo, and Leia destroy the Death Star." },
+                    { id: "sw-9", title: "Star Wars: Episode V – The Empire Strikes Back", year: 1980, type: "Movie", mins: 124, duration: "2h 04m", ott: ["JioHotstar"], releaseRank: 2, chronoRank: 12, note: "Luke trains with Yoda while Darth Vader reveals a shocking truth." },
+                    { id: "sw-10", title: "Star Wars: Episode VI – Return of the Jedi", year: 1983, type: "Movie", mins: 131, duration: "2h 11m", ott: ["JioHotstar"], releaseRank: 3, chronoRank: 13, note: "The Rebel Alliance defeats the Emperor and Anakin finds redemption." },
+                    { id: "sw-11", title: "The Mandalorian (Seasons 1–3)", year: 2019, type: "TV Series", mins: 960, duration: "24 Episodes • ~40m", ott: ["JioHotstar"], releaseRank: 12, chronoRank: 14, note: "Din Djarin protects Grogu across the Outer Rim." },
+                    { id: "sw-12", title: "Star Wars: Episode VII – The Force Awakens", year: 2015, type: "Movie", mins: 138, duration: "2h 18m", ott: ["JioHotstar"], releaseRank: 8.5, chronoRank: 17, note: "Rey, Finn, and Poe battle the First Order and Kylo Ren." },
+                    { id: "sw-13", title: "Star Wars: Episode VIII – The Last Jedi", year: 2017, type: "Movie", mins: 152, duration: "2h 32m", ott: ["JioHotstar"], releaseRank: 9.5, chronoRank: 18, note: "Rey seeks training from an exiled Luke Skywalker." },
+                    { id: "sw-14", title: "Star Wars: Episode IX – The Rise of Skywalker", year: 2019, type: "Movie", mins: 142, duration: "2h 22m", ott: ["JioHotstar"], releaseRank: 11, chronoRank: 19, note: "The Skywalker Saga concludes against Emperor Palpatine." }
+                ]
+            },
+            {
+                id: "wizarding-world",
+                title: "Harry Potter & Wizarding World",
+                posterQuery: "Harry Potter and the Prisoner of Azkaban",
+                group: "movies",
+                category: "Fantasy / Adventure",
+                ott: ["JioHotstar", "Netflix"],
+                aliases: ["harry potter", "wizarding world", "fantastic beasts", "hogwarts", "voldemort", "dumbledore"],
+                synopsis: "J.K. Rowling's magical universe spanning Newt Scamander's 1920s adventures and Harry Potter's seven years at Hogwarts.",
+                items: [
+                    { id: "hp-1", title: "Fantastic Beasts and Where to Find Them", year: 2016, type: "Movie", mins: 133, duration: "2h 13m", ott: ["JioHotstar", "Netflix"], releaseRank: 9, chronoRank: 1, note: "Set in 1926 New York; magizoologist Newt Scamander encounters Grindelwald." },
+                    { id: "hp-2", title: "Fantastic Beasts: The Crimes of Grindelwald", year: 2018, type: "Movie", mins: 134, duration: "2h 14m", ott: ["JioHotstar", "Netflix"], releaseRank: 10, chronoRank: 2, note: "Young Albus Dumbledore enlists Newt in 1927 Paris." },
+                    { id: "hp-3", title: "Fantastic Beasts: The Secrets of Dumbledore", year: 2022, type: "Movie", mins: 142, duration: "2h 22m", ott: ["JioHotstar", "Netflix"], releaseRank: 11, chronoRank: 3, note: "Set in the 1930s; Dumbledore's team thwarts Grindelwald's rise." },
+                    { id: "hp-4", title: "Harry Potter and the Sorcerer's Stone", year: 2001, type: "Movie", mins: 152, duration: "2h 32m", ott: ["JioHotstar"], releaseRank: 1, chronoRank: 4, note: "11-year-old Harry discovers he is a wizard and enters Hogwarts." },
+                    { id: "hp-5", title: "Harry Potter and the Chamber of Secrets", year: 2002, type: "Movie", mins: 161, duration: "2h 41m", ott: ["JioHotstar"], releaseRank: 2, chronoRank: 5, note: "A mysterious monster petrifies students as Tom Riddle's diary surfaces." },
+                    { id: "hp-6", title: "Harry Potter and the Prisoner of Azkaban", year: 2004, type: "Movie", mins: 142, duration: "2h 22m", ott: ["JioHotstar"], releaseRank: 3, chronoRank: 6, note: "Sirius Black escapes Azkaban, revealing secrets about Harry's parents." },
+                    { id: "hp-7", title: "Harry Potter and the Goblet of Fire", year: 2005, type: "Movie", mins: 157, duration: "2h 37m", ott: ["JioHotstar"], releaseRank: 4, chronoRank: 7, note: "Harry enters the Triwizard Tournament as Voldemort regains a body." },
+                    { id: "hp-8", title: "Harry Potter and the Order of the Phoenix", year: 2007, type: "Movie", mins: 138, duration: "2h 18m", ott: ["JioHotstar"], releaseRank: 5, chronoRank: 8, note: "Harry forms Dumbledore's Army to resist Dolores Umbridge." },
+                    { id: "hp-9", title: "Harry Potter and the Half-Blood Prince", year: 2009, type: "Movie", mins: 153, duration: "2h 33m", ott: ["JioHotstar"], releaseRank: 6, chronoRank: 9, note: "Dumbledore and Harry uncover Voldemort's Horcruxes." },
+                    { id: "hp-10", title: "Harry Potter and the Deathly Hallows – Part 1", year: 2010, type: "Movie", mins: 146, duration: "2h 26m", ott: ["JioHotstar"], releaseRank: 7, chronoRank: 10, note: "Harry, Ron, and Hermione go on the run to destroy Horcruxes." },
+                    { id: "hp-11", title: "Harry Potter and the Deathly Hallows – Part 2", year: 2011, type: "Movie", mins: 130, duration: "2h 10m", ott: ["JioHotstar"], releaseRank: 8, chronoRank: 11, note: "The Battle of Hogwarts decides the fate of the Wizarding World." }
+                ]
+            },
+            {
+                id: "middle-earth",
+                title: "The Lord of the Rings & Middle-earth",
+                posterQuery: "The Lord of the Rings The Fellowship of the Ring",
+                group: "movies",
+                category: "High Fantasy / Epic",
+                ott: ["Amazon Prime Video", "JioHotstar"],
+                aliases: ["lord of the rings", "lotr", "hobbit", "rings of power", "middle-earth", "frodo", "gandalf"],
+                synopsis: "J.R.R. Tolkien's legendary realm of Middle-earth, from the Second Age forging of the Rings to Frodo's journey to Mount Doom.",
+                items: [
+                    { id: "me-1", title: "The Lord of the Rings: The Rings of Power", year: 2022, type: "TV Series", mins: 1040, duration: "16 Episodes • ~65m", ott: ["Amazon Prime Video"], releaseRank: 7, chronoRank: 1, note: "Set thousands of years earlier in the Second Age; chronicles the forging of the Rings." },
+                    { id: "me-2", title: "The Hobbit: An Unexpected Journey", year: 2012, type: "Movie", mins: 169, duration: "2h 49m", ott: ["Amazon Prime Video"], releaseRank: 4, chronoRank: 2, note: "Bilbo Baggins joins Thorin's company to reclaim Erebor from Smaug." },
+                    { id: "me-3", title: "The Hobbit: The Desolation of Smaug", year: 2013, type: "Movie", mins: 161, duration: "2h 41m", ott: ["Amazon Prime Video"], releaseRank: 5, chronoRank: 3, note: "The dwarves reach the Lonely Mountain while Gandalf uncovers the Necromancer." },
+                    { id: "me-4", title: "The Hobbit: The Battle of the Five Armies", year: 2014, type: "Movie", mins: 144, duration: "2h 24m", ott: ["Amazon Prime Video"], releaseRank: 6, chronoRank: 4, note: "Men, Elves, and Dwarves unite against Orc armies at Erebor." },
+                    { id: "me-5", title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001, type: "Movie", mins: 178, duration: "2h 58m", ott: ["Amazon Prime Video", "JioHotstar"], releaseRank: 1, chronoRank: 5, note: "Frodo sets out with the Fellowship to destroy the One Ring." },
+                    { id: "me-6", title: "The Lord of the Rings: The Two Towers", year: 2002, type: "Movie", mins: 179, duration: "2h 59m", ott: ["Amazon Prime Video", "JioHotstar"], releaseRank: 2, chronoRank: 6, note: "Rohan defends Helm's Deep while Gollum guides Frodo toward Mordor." },
+                    { id: "me-7", title: "The Lord of the Rings: The Return of the King", year: 2003, type: "Movie", mins: 201, duration: "3h 21m", ott: ["Amazon Prime Video", "JioHotstar"], releaseRank: 3, chronoRank: 7, note: "Aragorn claims Gondor's throne as Frodo reaches Mount Doom." }
+                ]
+            },
+            {
+                id: "john-wick",
+                title: "John Wick Universe",
+                posterQuery: "John Wick",
+                group: "movies",
+                category: "Neo-Noir Action",
+                ott: ["Amazon Prime Video", "Netflix"],
+                aliases: ["john wick", "continental", "ballerina", "baba yaga", "keanu reeves"],
+                synopsis: "A stylized underworld of assassins governed by the High Table, following legendary hitman John Wick and the Continental Hotel.",
+                items: [
+                    { id: "jw-1", title: "The Continental: From the World of John Wick", year: 2023, type: "TV Series", mins: 260, duration: "3 Episodes • ~85m", ott: ["Amazon Prime Video"], releaseRank: 5, chronoRank: 1, note: "Set in 1970s New York; shows how young Winston seized control of the Continental." },
+                    { id: "jw-2", title: "John Wick", year: 2014, type: "Movie", mins: 101, duration: "1h 41m", ott: ["Amazon Prime Video"], releaseRank: 1, chronoRank: 2, note: "Retired hitman John Wick re-enters the underworld to avenge his dog." },
+                    { id: "jw-3", title: "John Wick: Chapter 2", year: 2017, type: "Movie", mins: 122, duration: "2h 02m", ott: ["Amazon Prime Video"], releaseRank: 2, chronoRank: 3, note: "Bound by a blood oath, John travels to Rome and breaks the Continental's rule." },
+                    { id: "jw-4", title: "John Wick: Chapter 3 – Parabellum", year: 2019, type: "Movie", mins: 131, duration: "2h 11m", ott: ["Amazon Prime Video"], releaseRank: 3, chronoRank: 4, note: "Excommunicado with a $14M bounty, John fights to survive the High Table." },
+                    { id: "jw-5", title: "John Wick: Chapter 4", year: 2023, type: "Movie", mins: 169, duration: "2h 49m", ott: ["Amazon Prime Video"], releaseRank: 4, chronoRank: 5, note: "John challenges the Marquis de Gramont to a duel in Paris." }
+                ]
+            },
+            {
+                id: "monsterverse",
+                title: "MonsterVerse (Godzilla & Kong)",
+                posterQuery: "Godzilla vs Kong",
+                group: "movies",
+                category: "Kaiju / Sci-Fi Action",
+                ott: ["Netflix", "Amazon Prime Video", "Apple TV+"],
+                aliases: ["monsterverse", "godzilla", "kong", "king kong", "monarch", "skull island"],
+                synopsis: "Legendary's titan-sized universe chronicling Monarch's discovery of apex predators Godzilla, King Kong, Mothra, and King Ghidorah.",
+                items: [
+                    { id: "mv-1", title: "Kong: Skull Island", year: 2017, type: "Movie", mins: 118, duration: "1h 58m", ott: ["Netflix", "Amazon Prime Video"], releaseRank: 2, chronoRank: 1, note: "Set in 1973; Monarch explorers encounter Kong on an uncharted island." },
+                    { id: "mv-2", title: "Skull Island", year: 2023, type: "TV Series", mins: 200, duration: "8 Episodes • ~25m", ott: ["Netflix"], releaseRank: 5, chronoRank: 2, note: "Set in the 1990s; shipwrecked survivors encounter island monsters." },
+                    { id: "mv-3", title: "Godzilla", year: 2014, type: "Movie", mins: 123, duration: "2h 03m", ott: ["Amazon Prime Video"], releaseRank: 1, chronoRank: 3, note: "Godzilla awakens in San Francisco to battle two parasitic MUTOs." },
+                    { id: "mv-4", title: "Monarch: Legacy of Monsters", year: 2023, type: "TV Series", mins: 480, duration: "10 Episodes • ~48m", ott: ["Apple TV+"], releaseRank: 6, chronoRank: 4, note: "Dual timelines following Godzilla's 2014 attack on San Francisco." },
+                    { id: "mv-5", title: "Godzilla: King of the Monsters", year: 2019, type: "Movie", mins: 132, duration: "2h 12m", ott: ["Netflix", "Amazon Prime Video"], releaseRank: 3, chronoRank: 5, note: "Godzilla clashes with Mothra, Rodan, and King Ghidorah." },
+                    { id: "mv-6", title: "Godzilla vs. Kong", year: 2021, type: "Movie", mins: 113, duration: "1h 53m", ott: ["Netflix", "Amazon Prime Video"], releaseRank: 4, chronoRank: 6, note: "The two alphas collide while Apex secretly builds Mechagodzilla." },
+                    { id: "mv-7", title: "Godzilla x Kong: The New Empire", year: 2024, type: "Movie", mins: 115, duration: "1h 55m", ott: ["JioHotstar"], releaseRank: 7, chronoRank: 7, note: "Godzilla and Kong unite in Hollow Earth against the Skar King." }
+                ]
+            },
+            {
+                id: "dune",
+                title: "Dune Saga (Denis Villeneuve)",
+                posterQuery: "Dune Part Two",
+                group: "movies",
+                category: "Epic Sci-Fi",
+                ott: ["JioHotstar", "Netflix"],
+                aliases: ["dune", "paul atreides", "arrakis", "dune prophecy"],
+                synopsis: "Frank Herbert's desert planet epic exploring House Atreides, the spice melange on Arrakis, and the origins of the Bene Gesserit.",
+                items: [
+                    { id: "dn-1", title: "Dune: Prophecy", year: 2024, type: "TV Series", mins: 360, duration: "6 Episodes • ~60m", ott: ["JioHotstar"], releaseRank: 3, chronoRank: 1, note: "Set 10,000 years before Paul Atreides; founding of the Bene Gesserit." },
+                    { id: "dn-2", title: "Dune: Part One", year: 2021, type: "Movie", mins: 155, duration: "2h 35m", ott: ["Netflix", "JioHotstar"], releaseRank: 1, chronoRank: 2, note: "Duke Leto Atreides assumes stewardship of Arrakis before a Harkonnen ambush." },
+                    { id: "dn-3", title: "Dune: Part Two", year: 2024, type: "Movie", mins: 166, duration: "2h 46m", ott: ["JioHotstar"], releaseRank: 2, chronoRank: 3, note: "Paul Atreides unites with Chani and the Fremen against House Harkonnen." }
+                ]
+            },
+            {
+                id: "conjuring",
+                title: "The Conjuring Universe",
+                posterQuery: "The Conjuring",
+                group: "movies",
+                category: "Supernatural Horror",
+                ott: ["Netflix", "Amazon Prime Video", "JioHotstar"],
+                aliases: ["conjuring", "annabelle", "the nun", "la llorona", "valak"],
+                synopsis: "A shared horror universe inspired by the real-life paranormal case files of Ed and Lorraine Warren.",
+                items: [
+                    { id: "cj-1", title: "The Nun", year: 2018, type: "Movie", mins: 96, duration: "1h 36m", ott: ["Netflix", "Amazon Prime Video"], releaseRank: 5, chronoRank: 1, note: "Set in 1952 Romania; introduces the demon Valak." },
+                    { id: "cj-2", title: "Annabelle: Creation", year: 2017, type: "Movie", mins: 109, duration: "1h 49m", ott: ["Netflix"], releaseRank: 4, chronoRank: 2, note: "Set in 1955; reveals the origin of the possessed Annabelle doll." },
+                    { id: "cj-3", title: "The Nun II", year: 2023, type: "Movie", mins: 110, duration: "1h 50m", ott: ["JioHotstar"], releaseRank: 8, chronoRank: 3, note: "Set in 1956 France; Sister Irene confronts Valak once again." },
+                    { id: "cj-4", title: "Annabelle", year: 2014, type: "Movie", mins: 99, duration: "1h 39m", ott: ["Netflix"], releaseRank: 2, chronoRank: 4, note: "Set in 1967; a young couple is terrorized by the vintage doll." },
+                    { id: "cj-5", title: "The Conjuring", year: 2013, type: "Movie", mins: 112, duration: "1h 52m", ott: ["Netflix", "Amazon Prime Video"], releaseRank: 1, chronoRank: 5, note: "Set in 1971; Ed and Lorraine investigate the Perron farmhouse." },
+                    { id: "cj-6", title: "Annabelle Comes Home", year: 2019, type: "Movie", mins: 106, duration: "1h 46m", ott: ["Netflix"], releaseRank: 6, chronoRank: 6, note: "Set in 1972; Annabelle awakens all artifacts in the Warrens' room." },
+                    { id: "cj-7", title: "The Conjuring 2", year: 2016, type: "Movie", mins: 134, duration: "2h 14m", ott: ["Netflix", "Amazon Prime Video"], releaseRank: 3, chronoRank: 7, note: "Set in 1977 London; the Warrens investigate the Enfield Poltergeist." },
+                    { id: "cj-8", title: "The Conjuring: The Devil Made Me Do It", year: 2021, type: "Movie", mins: 112, duration: "1h 52m", ott: ["Netflix"], releaseRank: 7, chronoRank: 8, note: "Set in 1981; a murder suspect claims demonic possession in court." }
+                ]
+            },
+
+            // --- GLOBAL DRAMAS & TV SERIES ---
+            {
+                id: "stranger-things",
+                title: "Stranger Things",
+                posterQuery: "Stranger Things",
+                group: "dramas",
+                category: "Sci-Fi Horror Drama",
+                ott: ["Netflix"],
+                aliases: ["stranger things", "hawkins", "eleven", "vecna", "upside down", "demogorgon"],
+                synopsis: "When a young boy vanishes in 1980s Hawkins, Indiana, his friends uncover secret government experiments and the terrifying Upside Down.",
+                items: [
+                    { id: "st-1", title: "Stranger Things: Season 1", year: 2016, type: "TV Series", mins: 400, duration: "8 Episodes • ~50m", ott: ["Netflix"], releaseRank: 1, chronoRank: 1, note: "Will Byers disappears and Eleven escapes Hawkins Lab." },
+                    { id: "st-2", title: "Stranger Things: Season 2", year: 2017, type: "TV Series", mins: 465, duration: "9 Episodes • ~52m", ott: ["Netflix"], releaseRank: 2, chronoRank: 2, note: "The Mind Flayer threatens Hawkins as Max Mayfield joins the party." },
+                    { id: "st-3", title: "Stranger Things: Season 3", year: 2019, type: "TV Series", mins: 445, duration: "8 Episodes • ~55m", ott: ["Netflix"], releaseRank: 3, chronoRank: 3, note: "Summer 1985 at Starcourt Mall hides a secret Soviet gate." },
+                    { id: "st-4", title: "Stranger Things: Season 4", year: 2022, type: "TV Series", mins: 780, duration: "9 Episodes • ~85m", ott: ["Netflix"], releaseRank: 4, chronoRank: 4, note: "Vecna strikes Hawkins while Eleven reclaims her powers." },
+                    { id: "st-5", title: "Stranger Things: Season 5 (Finale)", year: 2025, type: "TV Series", mins: 640, duration: "8 Episodes • ~80m", ott: ["Netflix"], releaseRank: 5, chronoRank: 5, note: "The Hawkins crew unites for the final battle against Vecna." }
+                ]
+            },
+            {
+                id: "game-of-thrones",
+                title: "Game of Thrones & Westeros Universe",
+                posterQuery: "Game of Thrones",
+                group: "dramas",
+                category: "Epic Fantasy Drama",
+                ott: ["JioHotstar"],
+                aliases: ["game of thrones", "got", "house of the dragon", "targaryen", "jon snow", "westeros"],
+                synopsis: "George R.R. Martin's brutal political fantasy chronicling House Targaryen's civil war and the battle for the Iron Throne.",
+                items: [
+                    { id: "got-1", title: "House of the Dragon (Seasons 1–2)", year: 2022, type: "TV Series", mins: 1120, duration: "18 Episodes • ~62m", ott: ["JioHotstar"], releaseRank: 2, chronoRank: 1, note: "Set 172 years before Daenerys; the Dance of the Dragons tears House Targaryen apart." },
+                    { id: "got-2", title: "Game of Thrones (Seasons 1–8)", year: 2011, type: "TV Series", mins: 4160, duration: "73 Episodes • ~57m", ott: ["JioHotstar"], releaseRank: 1, chronoRank: 2, note: "Noble houses clash for the Iron Throne while the Night King marches south." }
+                ]
+            },
+            {
+                id: "breaking-bad",
+                title: "Breaking Bad & Better Call Saul",
+                posterQuery: "Breaking Bad",
+                group: "dramas",
+                category: "Crime Drama / Thriller",
+                ott: ["Netflix"],
+                aliases: ["breaking bad", "better call saul", "el camino", "walter white", "heisenberg", "saul goodman"],
+                synopsis: "Vince Gilligan's acclaimed crime saga chronicling Jimmy McGill's fall into Saul Goodman, Walter White's empire, and Jesse's escape.",
+                items: [
+                    { id: "bb-1", title: "Better Call Saul (Seasons 1–6, Ep. 9)", year: 2015, type: "TV Series", mins: 2950, duration: "59 Episodes • ~50m", ott: ["Netflix"], releaseRank: 2, chronoRank: 1, note: "Prequel set 6 years before Breaking Bad; Jimmy McGill becomes Saul Goodman." },
+                    { id: "bb-2", title: "Breaking Bad (Seasons 1–5)", year: 2008, type: "TV Series", mins: 2970, duration: "62 Episodes • ~48m", ott: ["Netflix"], releaseRank: 1, chronoRank: 2, note: "Chemistry teacher Walter White partners with Jesse Pinkman to build an empire." },
+                    { id: "bb-3", title: "El Camino: A Breaking Bad Movie", year: 2019, type: "Movie", mins: 122, duration: "2h 02m", ott: ["Netflix"], releaseRank: 3, chronoRank: 3, note: "Picks up seconds after the Breaking Bad finale as Jesse flees Albuquerque." },
+                    { id: "bb-4", title: "Better Call Saul (Season 6, Ep. 10–13)", year: 2022, type: "TV Series", mins: 220, duration: "4 Episodes • ~55m", ott: ["Netflix"], releaseRank: 2.5, chronoRank: 4, note: "Black-and-white epilogue set after Breaking Bad & El Camino." }
+                ]
+            },
+            {
+                id: "money-heist",
+                title: "Money Heist (La Casa de Papel) Universe",
+                posterQuery: "Money Heist",
+                group: "dramas",
+                category: "Heist Thriller Drama",
+                ott: ["Netflix"],
+                aliases: ["money heist", "la casa de papel", "berlin", "professor", "bella ciao"],
+                synopsis: "The Professor orchestrates audacious heists on the Royal Mint and Bank of Spain, plus the Parisian prequel chronicling Berlin's golden years.",
+                items: [
+                    { id: "mh-1", title: "Berlin (La Casa de Papel Prequel)", year: 2023, type: "TV Series", mins: 400, duration: "8 Episodes • ~50m", ott: ["Netflix"], releaseRank: 2, chronoRank: 1, note: "Years before the Royal Mint heist, Berlin plots a €44M jewel robbery in Paris." },
+                    { id: "mh-2", title: "Money Heist (Parts 1–5)", year: 2017, type: "TV Series", mins: 2050, duration: "41 Episodes • ~50m", ott: ["Netflix"], releaseRank: 1, chronoRank: 2, note: "Eight thieves take hostages and lock themselves inside Spain's Royal Mint & Bank." }
+                ]
+            },
+            {
+                id: "dark",
+                title: "Dark (Netflix German Sci-Fi)",
+                posterQuery: "Dark",
+                group: "dramas",
+                category: "Time-Travel Mystery Drama",
+                ott: ["Netflix"],
+                aliases: ["dark", "windon", "jonas kahnwald", "sic mundus"],
+                synopsis: "A missing child in the German town of Winden exposes a four-family time-travel conspiracy spanning three generations.",
+                items: [
+                    { id: "dk-1", title: "Dark: Season 1", year: 2017, type: "TV Series", mins: 520, duration: "10 Episodes • ~52m", ott: ["Netflix"], releaseRank: 1, chronoRank: 1, note: "Mikkel vanishes into the Winden caves, triggering a 33-year temporal loop." },
+                    { id: "dk-2", title: "Dark: Season 2", year: 2019, type: "TV Series", mins: 450, duration: "8 Episodes • ~56m", ott: ["Netflix"], releaseRank: 2, chronoRank: 2, note: "Jonas tries to prevent the impending apocalypse while Sic Mundus manipulates time." },
+                    { id: "dk-3", title: "Dark: Season 3", year: 2020, type: "TV Series", mins: 480, duration: "8 Episodes • ~60m", ott: ["Netflix"], releaseRank: 3, chronoRank: 3, note: "Parallel worlds collide as Jonas and Martha seek the origin of the knot." }
+                ]
+            },
+
+            // --- K-DRAMAS ---
+            {
+                id: "reply-series",
+                title: "The Reply Anthology (1997, 1994, 1988)",
+                posterQuery: "Reply 1988",
+                group: "kdrama",
+                category: "Slice-of-Life K-Drama",
+                ott: ["Netflix", "Viki"],
+                aliases: ["reply 1988", "reply 1997", "reply 1994", "shin won-ho", "ssangmundong", "kdrama"],
+                synopsis: "Shin Won-ho and Lee Woo-jung's beloved nostalgia trilogy celebrating youth, family bonds, first love, and Korea's iconic eras.",
+                items: [
+                    { id: "rp-1", title: "Reply 1988", year: 2015, type: "K-Drama", mins: 1800, duration: "20 Episodes • ~90m", ott: ["Netflix", "Viki"], releaseRank: 3, chronoRank: 1, note: "Chronologically earliest (1988); five childhood friends in Ssangmundong." },
+                    { id: "rp-2", title: "Reply 1994", year: 2013, type: "K-Drama", mins: 1575, duration: "21 Episodes • ~75m", ott: ["Netflix", "Viki"], releaseRank: 2, chronoRank: 2, note: "Set in 1994 Seoul; provincial college students live together in a boarding house." },
+                    { id: "rp-3", title: "Reply 1997", year: 2012, type: "K-Drama", mins: 800, duration: "16 Episodes • ~50m", ott: ["Netflix", "Viki"], releaseRank: 1, chronoRank: 3, note: "The original hit set in 1997 Busan; H.O.T. fangirl Sung Shi-won and friends." }
+                ]
+            },
+            {
+                id: "hospital-playlist",
+                title: "Hospital Playlist & Prison Playbook",
+                posterQuery: "Hospital Playlist",
+                group: "kdrama",
+                category: "Medical / Healing K-Drama",
+                ott: ["Netflix"],
+                aliases: ["hospital playlist", "prison playbook", "resident playbook", "99z", "ikjun"],
+                synopsis: "Five doctors who have been best friends since med school in 1999 balance life-or-death hospital shifts and their garage band.",
+                items: [
+                    { id: "hp-kd-1", title: "Prison Playbook", year: 2017, type: "K-Drama", mins: 1440, duration: "16 Episodes • ~90m", ott: ["Netflix"], releaseRank: 1, chronoRank: 1, note: "Same creative universe; a star baseball pitcher navigates life behind bars." },
+                    { id: "hp-kd-2", title: "Hospital Playlist: Season 1", year: 2020, type: "K-Drama", mins: 1020, duration: "12 Episodes • ~85m", ott: ["Netflix"], releaseRank: 2, chronoRank: 2, note: "The '99ers reunite at Yulje Medical Center and revive their college band." },
+                    { id: "hp-kd-3", title: "Hospital Playlist: Season 2", year: 2021, type: "K-Drama", mins: 1080, duration: "12 Episodes • ~90m", ott: ["Netflix"], releaseRank: 3, chronoRank: 3, note: "Deeper romances, heartwarming patient stories, and unforgettable band sessions." },
+                    { id: "hp-kd-4", title: "Resident Playbook", year: 2025, type: "K-Drama", mins: 900, duration: "12 Episodes • ~75m", ott: ["Netflix"], releaseRank: 4, chronoRank: 4, note: "Spin-off following OB/GYN residents at Jongno Yulje Medical Center." }
+                ]
+            },
+            {
+                id: "alchemy-of-souls",
+                title: "Alchemy of Souls (Parts 1 & 2)",
+                posterQuery: "Alchemy of Souls",
+                group: "kdrama",
+                category: "Fantasy Romance K-Drama",
+                ott: ["Netflix"],
+                aliases: ["alchemy of souls", "jang uk", "naksu", "mudeok", "daeho"],
+                synopsis: "In the fictional nation of Daeho, a powerful assassin trapped in a weak body becomes the secret master to a troubled young nobleman.",
+                items: [
+                    { id: "aos-1", title: "Alchemy of Souls: Part 1", year: 2022, type: "K-Drama", mins: 1600, duration: "20 Episodes • ~80m", ott: ["Netflix"], releaseRank: 1, chronoRank: 1, note: "Assassin Naksu shifts souls into Mu-deok and trains Jang Uk in magecraft." },
+                    { id: "aos-2", title: "Alchemy of Souls: Light and Shadow (Part 2)", year: 2022, type: "K-Drama", mins: 800, duration: "10 Episodes • ~80m", ott: ["Netflix"], releaseRank: 2, chronoRank: 2, note: "Set 3 years later; Jang Uk hunts soul-shifters and crosses paths with Jin Bu-yeon." }
+                ]
+            },
+            {
+                id: "squid-game",
+                title: "Squid Game",
+                posterQuery: "Squid Game",
+                group: "kdrama",
+                category: "Survival Thriller K-Drama",
+                ott: ["Netflix"],
+                aliases: ["squid game", "gi-hun", "front man", "456"],
+                synopsis: "Hundreds of cash-strapped contestants accept a strange invitation to compete in deadly children's games for 45.6 billion won.",
+                items: [
+                    { id: "sg-1", title: "Squid Game: Season 1", year: 2021, type: "K-Drama", mins: 495, duration: "9 Episodes • ~55m", ott: ["Netflix"], releaseRank: 1, chronoRank: 1, note: "Seong Gi-hun enters the lethal arena and uncovers the VIPs behind the games." },
+                    { id: "sg-2", title: "Squid Game: Season 2", year: 2024, type: "K-Drama", mins: 430, duration: "7 Episodes • ~61m", ott: ["Netflix"], releaseRank: 2, chronoRank: 2, note: "Player 456 returns to the deadly arena to dismantle the Front Man's operation." },
+                    { id: "sg-3", title: "Squid Game: Season 3 (Finale)", year: 2025, type: "K-Drama", mins: 380, duration: "6 Episodes • ~63m", ott: ["Netflix"], releaseRank: 3, chronoRank: 3, note: "The final reckoning between Gi-hun and the Front Man." }
+                ]
+            },
+
+            // --- INDIAN WEB SERIES ---
+            {
+                id: "family-man-farzi",
+                title: "The Family Man & Farzi Universe",
+                posterQuery: "The Family Man",
+                group: "indian",
+                category: "Indian Espionage / Crime Thriller",
+                ott: ["Amazon Prime Video"],
+                aliases: ["family man", "farzi", "srikant tiwari", "manoj bajpayee", "shahid kapoor", "raj and dk", "citadel honey bunny"],
+                synopsis: "Raj & DK's interconnected Indian spy-crime universe uniting TASC intelligence officer Srikant Tiwari with counterfeiter Sunny.",
+                items: [
+                    { id: "fm-1", title: "Citadel: Honey Bunny", year: 2024, type: "Indian Series", mins: 280, duration: "6 Episodes • ~46m", ott: ["Amazon Prime Video"], releaseRank: 4, chronoRank: 1, note: "1990s prequel roots in the Raj & DK spy universe." },
+                    { id: "fm-2", title: "The Family Man: Season 1", year: 2019, type: "Indian Series", mins: 450, duration: "10 Episodes • ~45m", ott: ["Amazon Prime Video"], releaseRank: 1, chronoRank: 2, note: "Middle-class dad Srikant Tiwari secretly thwarts a major terror plot." },
+                    { id: "fm-3", title: "The Family Man: Season 2", year: 2021, type: "Indian Series", mins: 405, duration: "9 Episodes • ~45m", ott: ["Amazon Prime Video"], releaseRank: 2, chronoRank: 3, note: "Srikant faces a high-stakes mission in Chennai against rebel leader Raji." },
+                    { id: "fm-4", title: "Farzi: Season 1", year: 2023, type: "Indian Series", mins: 440, duration: "8 Episodes • ~55m", ott: ["Amazon Prime Video"], releaseRank: 3, chronoRank: 4, note: "Artist Sunny prints undetectable counterfeit notes; features a Srikant Tiwari cameo." }
+                ]
+            },
+            {
+                id: "mirzapur",
+                title: "Mirzapur",
+                posterQuery: "Mirzapur",
+                group: "indian",
+                category: "Indian Crime / Gangster Drama",
+                ott: ["Amazon Prime Video"],
+                aliases: ["mirzapur", "kaleen bhaiya", "guddu pandit", "munna bhaiya"],
+                synopsis: "A shocking wedding incident ignites a ruthless power war for the throne of Mirzapur between Kaleen Bhaiya and Guddu Pandit.",
+                items: [
+                    { id: "mz-1", title: "Mirzapur: Season 1", year: 2018, type: "Indian Series", mins: 450, duration: "9 Episodes • ~50m", ott: ["Amazon Prime Video"], releaseRank: 1, chronoRank: 1, note: "Guddu and Bablu enter Kaleen Bhaiya's empire until Munna triggers tragedy." },
+                    { id: "mz-2", title: "Mirzapur: Season 2", year: 2020, type: "Indian Series", mins: 500, duration: "10 Episodes • ~50m", ott: ["Amazon Prime Video"], releaseRank: 2, chronoRank: 2, note: "Wounded Guddu and Golu plot bloody vengeance across Purvanchal." },
+                    { id: "mz-3", title: "Mirzapur: Season 3", year: 2024, type: "Indian Series", mins: 500, duration: "10 Episodes • ~50m", ott: ["Amazon Prime Video"], releaseRank: 3, chronoRank: 3, note: "Guddu claims the Mirzapur throne while Kaleen Bhaiya plots his return." }
+                ]
+            },
+            {
+                id: "panchayat",
+                title: "Panchayat",
+                posterQuery: "Panchayat",
+                group: "indian",
+                category: "Indian Comedy Drama",
+                ott: ["Amazon Prime Video"],
+                aliases: ["panchayat", "phulera", "sachiv ji", "jitendra kumar", "tvf"],
+                synopsis: "An engineering graduate reluctantly takes a low-paying job as a Panchayat secretary in the remote village of Phulera, Uttar Pradesh.",
+                items: [
+                    { id: "pn-1", title: "Panchayat: Season 1", year: 2020, type: "Indian Series", mins: 280, duration: "8 Episodes • ~35m", ott: ["Amazon Prime Video"], releaseRank: 1, chronoRank: 1, note: "Abhishek adjusts to rural life in Phulera while studying for his CAT exam." },
+                    { id: "pn-2", title: "Panchayat: Season 2", year: 2022, type: "Indian Series", mins: 300, duration: "8 Episodes • ~38m", ott: ["Amazon Prime Video"], releaseRank: 2, chronoRank: 2, note: "Deeper bonds with Pradhan-Pati, Vikas, and Prahlad amid local politics." },
+                    { id: "pn-3", title: "Panchayat: Season 3", year: 2024, type: "Indian Series", mins: 320, duration: "8 Episodes • ~40m", ott: ["Amazon Prime Video"], releaseRank: 3, chronoRank: 3, note: "Panchayat election fever heats up as Banrakas challenges Pradhan's camp." }
+                ]
+            },
+
+            // --- ANIME ---
+            {
+                id: "attack-on-titan",
+                title: "Attack on Titan (Shingeki no Kyojin)",
+                posterQuery: "Attack on Titan",
+                group: "anime",
+                category: "Dark Fantasy / Anime",
+                ott: ["Crunchyroll", "Netflix"],
+                aliases: ["attack on titan", "aot", "shingeki no kyojin", "eren yeager", "levi"],
+                synopsis: "Humanity fights for survival behind massive walls against man-eating Titans, uncovering dark geopolitical truths.",
+                items: [
+                    { id: "aot-1", title: "Attack on Titan: Season 1", year: 2013, type: "Anime Series", mins: 600, duration: "25 Episodes • ~24m", ott: ["Crunchyroll", "Netflix"], releaseRank: 1, chronoRank: 1, note: "The Colossal Titan breaches Wall Maria; Eren vows to exterminate all Titans." },
+                    { id: "aot-2", title: "Attack on Titan: OVAs (No Regrets & Ilse's Notebook)", year: 2013, type: "OVA", mins: 120, duration: "5 Episodes • ~24m", ott: ["Crunchyroll"], releaseRank: 2, chronoRank: 2, note: "Essential backstory on Captain Levi's origins and Titan intelligence." },
+                    { id: "aot-3", title: "Attack on Titan: Season 2", year: 2017, type: "Anime Series", mins: 288, duration: "12 Episodes • ~24m", ott: ["Crunchyroll", "Netflix"], releaseRank: 3, chronoRank: 3, note: "Betrayals inside the Scout Regiment reveal the Armored & Colossal Titans." },
+                    { id: "aot-4", title: "Attack on Titan: Season 3 (Parts 1 & 2)", year: 2018, type: "Anime Series", mins: 528, duration: "22 Episodes • ~24m", ott: ["Crunchyroll", "Netflix"], releaseRank: 4, chronoRank: 4, note: "The Battle for Shiganshina and the truth inside Grisha's basement." },
+                    { id: "aot-5", title: "Attack on Titan: The Final Season (Parts 1 & 2)", year: 2020, type: "Anime Series", mins: 672, duration: "28 Episodes • ~24m", ott: ["Crunchyroll"], releaseRank: 5, chronoRank: 5, note: "Perspective shifts to Marley as Eren initiates the Rumbling." },
+                    { id: "aot-6", title: "Attack on Titan: The Final Chapters (Specials 1 & 2)", year: 2023, type: "Special", mins: 145, duration: "2h 25m", ott: ["Crunchyroll"], releaseRank: 6, chronoRank: 6, note: "The feature-length finale deciding the fate of humanity." }
+                ]
+            },
+            {
+                id: "demon-slayer",
+                title: "Demon Slayer: Kimetsu no Yaiba",
+                posterQuery: "Demon Slayer Kimetsu no Yaiba",
+                group: "anime",
+                category: "Dark Fantasy / Anime",
+                ott: ["Crunchyroll", "Netflix", "JioHotstar"],
+                aliases: ["demon slayer", "kimetsu no yaiba", "tanjiro", "mugen train", "hashira"],
+                synopsis: "Tanjiro Kamado joins the Demon Slayer Corps in Taisho-era Japan to avenge his family and cure his demon-turned sister Nezuko.",
+                items: [
+                    { id: "ds-1", title: "Demon Slayer: Season 1", year: 2019, type: "Anime Series", mins: 624, duration: "26 Episodes • ~24m", ott: ["Crunchyroll", "Netflix", "JioHotstar"], releaseRank: 1, chronoRank: 1, note: "Tanjiro masters Water Breathing and meets the Hashira." },
+                    { id: "ds-2", title: "Demon Slayer: Mugen Train", year: 2020, type: "Movie", mins: 117, duration: "1h 57m", ott: ["Crunchyroll", "Netflix", "JioHotstar"], releaseRank: 2, chronoRank: 2, note: "Tanjiro boards the Infinity Train alongside Flame Hashira Rengoku." },
+                    { id: "ds-3", title: "Demon Slayer: Entertainment District Arc", year: 2021, type: "Anime Series", mins: 264, duration: "11 Episodes • ~24m", ott: ["Crunchyroll", "Netflix", "JioHotstar"], releaseRank: 3, chronoRank: 3, note: "Sound Hashira Tengen Uzui leads an infiltration into Yoshiwara." },
+                    { id: "ds-4", title: "Demon Slayer: Swordsmith Village Arc", year: 2023, type: "Anime Series", mins: 264, duration: "11 Episodes • ~24m", ott: ["Crunchyroll", "Netflix"], releaseRank: 4, chronoRank: 4, note: "Tanjiro teams up with the Mist and Love Hashira." },
+                    { id: "ds-5", title: "Demon Slayer: Hashira Training Arc", year: 2024, type: "Anime Series", mins: 192, duration: "8 Episodes • ~24m", ott: ["Crunchyroll", "Netflix"], releaseRank: 5, chronoRank: 5, note: "The Corps trains before Muzan Kibutsuji's Infinity Castle ambush." }
+                ]
+            },
+            {
+                id: "naruto",
+                title: "Naruto & Boruto Saga",
+                posterQuery: "Naruto Shippuden",
+                group: "anime",
+                category: "Shonen Action / Anime",
+                ott: ["Crunchyroll", "Netflix", "Amazon Prime Video"],
+                aliases: ["naruto", "shippuden", "boruto", "sasuke", "kakashi", "hokage"],
+                synopsis: "Orphan ninja Naruto Uzumaki strives to earn his village's respect and become Hokage, continuing with his son Boruto.",
+                items: [
+                    { id: "na-1", title: "Naruto (Original Series)", year: 2002, type: "Anime Series", mins: 5060, duration: "220 Episodes • ~23m", ott: ["Crunchyroll", "Netflix", "Amazon Prime Video"], releaseRank: 1, chronoRank: 1, note: "Team 7's Chunin Exams and Sasuke's departure." },
+                    { id: "na-2", title: "Naruto: Shippuden", year: 2007, type: "Anime Series", mins: 11500, duration: "500 Episodes • ~23m", ott: ["Crunchyroll", "Netflix"], releaseRank: 2, chronoRank: 2, note: "Naruto battles the Akatsuki, Pain, and fights in the Fourth Great Ninja War." },
+                    { id: "na-3", title: "The Last: Naruto the Movie", year: 2014, type: "Movie", mins: 112, duration: "1h 52m", ott: ["Crunchyroll"], releaseRank: 3, chronoRank: 3, note: "Canon epilogue set 2 years after Shippuden." },
+                    { id: "na-4", title: "Boruto: Naruto Next Generations", year: 2017, type: "Anime Series", mins: 6739, duration: "293 Episodes • ~23m", ott: ["Crunchyroll", "Netflix"], releaseRank: 4, chronoRank: 4, note: "Seventh Hokage Naruto leads Konoha while Boruto faces the Otsutsuki." }
+                ]
+            }
+        ];
+
+        // Curated Recommendations for AI Matchmaker Default View
+        const CURATED_RECOMMENDATIONS = [
+            {
+                title: "Reply 1988",
+                year: 2015,
+                type: "K-Drama",
+                rating: "9.1/10",
+                duration: "20 Episodes • ~90m",
+                ott: ["Netflix", "Viki"],
+                franchiseId: "reply-series",
+                reason: "Widely hailed as the greatest slice-of-life K-drama ever made—warm neighborhood nostalgia, hilarious family banter, and deeply moving friendships."
+            },
+            {
+                title: "Dune: Part Two",
+                year: 2024,
+                type: "Movie",
+                rating: "8.8/10",
+                duration: "2h 46m",
+                ott: ["JioHotstar"],
+                franchiseId: "dune",
+                reason: "Denis Villeneuve delivers monumental IMAX-scale sci-fi spectacle as Paul Atreides embraces his destiny among the Fremen on Arrakis."
+            },
+            {
+                title: "The Family Man",
+                year: 2019,
+                type: "Indian Series",
+                rating: "8.7/10",
+                duration: "2 Seasons • 19 Eps",
+                ott: ["Amazon Prime Video"],
+                franchiseId: "family-man-farzi",
+                reason: "Manoj Bajpayee shines in a razor-sharp blend of high-stakes national security espionage and relatable middle-class family humor."
+            },
+            {
+                title: "Dark",
+                year: 2017,
+                type: "TV Series",
+                rating: "8.7/10",
+                duration: "3 Seasons • 26 Eps",
+                ott: ["Netflix"],
+                franchiseId: "dark",
+                reason: "A meticulously plotted German time-travel masterpiece where every clue across 1953, 1986, and 2019 snaps together seamlessly."
+            },
+            {
+                title: "Attack on Titan",
+                year: 2013,
+                type: "Anime Series",
+                rating: "9.1/10",
+                duration: "4 Seasons + Specials",
+                ott: ["Crunchyroll", "Netflix"],
+                franchiseId: "attack-on-titan",
+                reason: "Starts as visceral dark-fantasy survival and evolves into one of the most ambitious geopolitical mysteries in modern storytelling."
+            },
+            {
+                title: "Better Call Saul",
+                year: 2015,
+                type: "TV Series",
+                rating: "9.0/10",
+                duration: "6 Seasons • 63 Eps",
+                ott: ["Netflix"],
+                franchiseId: "breaking-bad",
+                reason: "A slow-burn character tragedy featuring unforgettable cinematography, legal chess matches, and Bob Odenkirk's career-best performance."
+            }
+        ];
+
+        // =========================================================================
+        // 3. STATE & STORAGE MANAGEMENT
+        // =========================================================================
+        const STORAGE_KEY_WATCHED = 'watchorder_watched_v2';
+        const STORAGE_KEY_AI_CACHE = 'watchorder_ai_cache_v2';
+
+        let state = {
+            appView: 'timeline',       // 'timeline' | 'recommend'
+            currentFranchise: null,
+            orderMode: 'release',      // 'release' | 'chronological'
+            typeFilter: 'all',         // 'all' | 'movie' | 'series'
+            ottFilter: 'all',          // 'all' | 'Netflix' | 'JioHotstar' ...
+            dirCategory: 'all',        // 'all' | 'movies' | 'dramas' | 'kdrama' | 'indian' | 'anime'
+            recFormat: 'All Formats',
+            watchedIds: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY_WATCHED) || '[]')),
+            aiCache: JSON.parse(localStorage.getItem(STORAGE_KEY_AI_CACHE) || '{}')
+        };
+
+        function saveWatched() {
+            localStorage.setItem(STORAGE_KEY_WATCHED, JSON.stringify([...state.watchedIds]));
+            updateGlobalWatchedPill();
+        }
+
+        function saveAiCache() {
+            try {
+                localStorage.setItem(STORAGE_KEY_AI_CACHE, JSON.stringify(state.aiCache));
+            } catch (e) {}
+        }
+
+        // =========================================================================
+        // 4. INITIALIZATION & HERO SPOTLIGHT
+        // =========================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSpotlight('mcu');
+            renderSpotlightDeck();
+            renderDirectoryGrid();
+            renderRecommendations(CURATED_RECOMMENDATIONS, "Editor's Top Picks Across Cinema, Dramas & Series", "Curated Selection");
+            updateGlobalWatchedPill();
+            setupAutocomplete();
+            lucide.createIcons();
+        });
+
+        function renderSpotlight(franchiseId) {
+            const f = FRANCHISE_DB.find(x => x.id === franchiseId) || FRANCHISE_DB[0];
+            const totalMins = f.items.reduce((acc, i) => acc + (i.mins || 120), 0);
+
+            document.getElementById('spotlightPosterWrap').innerHTML = renderPosterBox({
+                title: f.posterQuery || f.title,
+                year: f.items[0]?.year || '',
+                type: f.items[0]?.type || 'Movie',
+                ott: f.ott,
+                sizeClass: 'w-full',
+                rimGlow: true,
+                clickableData: {
+                    title: f.title,
+                    type: f.category,
+                    synopsis: f.synopsis,
+                    duration: formatMinutes(totalMins),
+                    ott: f.ott,
+                    franchiseId: f.id
+                }
+            });
+
+            document.getElementById('spotlightTitle').textContent = f.title;
+            document.getElementById('spotlightDesc').textContent = f.synopsis;
+            document.getElementById('spotlightActionBtn').setAttribute('onclick', `selectPresetFranchise('${f.id}')`);
+
+            document.getElementById('spotlightMeta').innerHTML = `
+                <span class="text-xs font-mono px-2.5 py-1 rounded-lg bg-obsidian-950/90 border border-slate-800 text-sky-300">
+                    ${f.items.length} Installments
+                </span>
+                <span class="text-xs font-mono px-2.5 py-1 rounded-lg bg-obsidian-950/90 border border-slate-800 text-slate-300">
+                    ${formatMinutes(totalMins)}
+                </span>
+                ${renderOttBadges(f.ott)}
+            `;
+            lucide.createIcons();
+        }
+
+        function renderSpotlightDeck() {
+            const spotlightIds = ['mcu', 'stranger-things', 'reply-series', 'family-man-farzi'];
+            const deck = document.getElementById('spotlightDeck');
+
+            deck.innerHTML = spotlightIds.map(id => {
+                const f = FRANCHISE_DB.find(x => x.id === id);
+                if (!f) return '';
+                const totalMins = f.items.reduce((acc, i) => acc + (i.mins || 120), 0);
+                const miniPoster = renderPosterBox({
+                    title: f.posterQuery || f.title,
+                    year: f.items[0]?.year || '',
+                    type: f.items[0]?.type || 'Series',
+                    ott: f.ott,
+                    sizeClass: 'w-12 sm:w-14'
+                });
+
+                return `
+                    <div
+                        onmouseenter="renderSpotlight('${f.id}')"
+                        onclick="selectPresetFranchise('${f.id}')"
+                        class="glass-card rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer"
+                    >
+                        ${miniPoster}
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[10px] font-mono text-sky-400 uppercase truncate">${f.category.split('/')[0]}</div>
+                            <div class="font-display font-bold text-xs sm:text-sm text-white leading-snug line-clamp-2 mt-0.5">${f.title}</div>
+                            <div class="text-[11px] font-mono text-slate-400 mt-1">${f.items.length} Entries • ${formatMinutes(totalMins)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =========================================================================
+        // 5. NAVIGATION & VIEW SWITCHING
+        // =========================================================================
+        function switchAppView(view) {
+            state.appView = view;
+            const tlContainer = document.getElementById('viewTimelineContainer');
+            const recContainer = document.getElementById('viewRecommendContainer');
+            const btnTl = document.getElementById('navTabTimeline');
+            const btnRec = document.getElementById('navTabRecommend');
+
+            if (view === 'timeline') {
+                tlContainer.classList.remove('hidden');
+                recContainer.classList.add('hidden');
+                btnTl.className = "flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-md shadow-sky-500/25 cursor-pointer";
+                btnRec.className = "flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white cursor-pointer";
+            } else {
+                tlContainer.classList.add('hidden');
+                recContainer.classList.remove('hidden');
+                btnRec.className = "flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-md shadow-sky-500/25 cursor-pointer";
+                btnTl.className = "flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-white cursor-pointer";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetToHome() {
+            switchAppView('timeline');
+            state.currentFranchise = null;
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('loadingSection').classList.add('hidden');
+            document.getElementById('featuredSpotlight').classList.remove('hidden');
+            document.getElementById('directorySection').classList.remove('hidden');
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            hideStatusBanner();
+            renderDirectoryGrid();
+        }
+
+        // =========================================================================
+        // 6. BENTO DIRECTORY GRID WITH POSTERS
+        // =========================================================================
+        function setDirectoryCategory(cat) {
+            state.dirCategory = cat;
+            document.querySelectorAll('.dir-cat-pill').forEach(btn => {
+                if (btn.id === `dirCat-${cat}`) {
+                    btn.className = "dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow cursor-pointer whitespace-nowrap";
+                } else {
+                    btn.className = "dir-cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900/90 text-slate-400 hover:text-white border border-slate-800 cursor-pointer whitespace-nowrap";
+                }
+            });
+            renderDirectoryGrid();
+        }
+
+        function renderDirectoryGrid() {
+            const filtered = state.dirCategory === 'all'
+                ? FRANCHISE_DB
+                : FRANCHISE_DB.filter(f => f.group === state.dirCategory);
+
+            document.getElementById('directoryCountPill').textContent = filtered.length;
+            const grid = document.getElementById('directoryGrid');
+
+            grid.innerHTML = filtered.map(f => {
+                const totalMins = f.items.reduce((acc, i) => acc + (i.mins || 120), 0);
+                const watchedCount = f.items.filter(i => state.watchedIds.has(i.id)).length;
+                const pct = Math.round((watchedCount / f.items.length) * 100);
+
+                const posterHtml = renderPosterBox({
+                    title: f.posterQuery || f.title,
+                    year: f.items[0]?.year || '',
+                    type: f.items[0]?.type || 'Movie',
+                    ott: f.ott,
+                    sizeClass: 'w-24 sm:w-28'
+                });
+
+                return `
+                    <div
+                        onclick="selectPresetFranchise('${f.id}')"
+                        class="glass-card rounded-2xl p-4 cursor-pointer flex gap-4 items-stretch group"
+                    >
+                        ${posterHtml}
+                        <div class="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-1.5 mb-1.5">
+                                    <span class="text-[10px] font-mono uppercase tracking-wider text-sky-300 bg-sky-500/10 border border-sky-400/20 px-2 py-0.5 rounded-full truncate">
+                                        ${f.category}
+                                    </span>
+                                </div>
+                                <h3 class="font-display font-bold text-base text-white group-hover:text-sky-300 transition-colors leading-snug line-clamp-2">
+                                    ${f.title}
+                                </h3>
+                                <p class="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">
+                                    ${f.synopsis}
+                                </p>
+                            </div>
+
+                            <div class="pt-3 mt-2 border-t border-slate-800/80 space-y-2">
+                                <div class="flex items-center justify-between text-[11px] font-mono text-slate-300">
+                                    <span>${f.items.length} Entries</span>
+                                    <span class="text-sky-300">${formatMinutes(totalMins)}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex flex-wrap gap-1">
+                                        ${renderOttBadges(f.ott.slice(0, 2))}
+                                    </div>
+                                    ${watchedCount > 0
+                                        ? `<span class="text-[11px] font-mono font-bold text-emerald-400">${pct}%</span>`
+                                        : `<i data-lucide="arrow-up-right" class="w-4 h-4 text-sky-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0"></i>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // 7. SEARCH, AUTOCOMPLETE & GEMINI AI UNIVERSE LOOKUP
+        // =========================================================================
+        function setupAutocomplete() {
+            const input = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+
+            input.addEventListener('input', (e) => {
+                const val = e.target.value.trim();
+                if (val.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                    showAutocompleteSuggestions(val);
+                } else {
+                    clearBtn.classList.add('hidden');
+                    hideAutocomplete();
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#searchForm') && !e.target.closest('#autocompleteDropdown')) {
+                    hideAutocomplete();
+                }
+            });
+        }
+
+        function clearSearchInput() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            hideAutocomplete();
+            input.focus();
+        }
+
+        function hideAutocomplete() {
+            document.getElementById('autocompleteDropdown').classList.add('hidden');
+        }
+
+        function showAutocompleteSuggestions(query) {
+            const q = query.toLowerCase();
+            const matches = [];
+
+            FRANCHISE_DB.forEach(franchise => {
+                let reason = null;
+                if (franchise.title.toLowerCase().includes(q)) reason = "Universe Match";
+                else if (franchise.aliases.some(a => a.includes(q) || q.includes(a))) reason = "Related Series / Saga";
+                else {
+                    const hit = franchise.items.find(i => i.title.toLowerCase().includes(q));
+                    if (hit) reason = `Includes "${hit.title}"`;
+                }
+                if (reason) matches.push({ franchise, reason });
+            });
+
+            const dropdown = document.getElementById('autocompleteDropdown');
+            let html = matches.slice(0, 5).map(({ franchise, reason }) => `
+                <button
+                    type="button"
+                    onclick="selectPresetFranchise('${franchise.id}')"
+                    class="w-full px-4 py-3 hover:bg-obsidian-800/90 flex items-center justify-between gap-3 transition-colors text-left cursor-pointer"
+                >
+                    <div class="flex items-center gap-3 min-w-0">
+                        ${renderPosterBox({ title: franchise.posterQuery || franchise.title, type: franchise.items[0]?.type, ott: franchise.ott, sizeClass: 'w-9' })}
+                        <div class="min-w-0">
+                            <div class="font-display font-bold text-sm text-white truncate">${franchise.title}</div>
+                            <div class="text-xs text-sky-400 truncate">${reason} • ${franchise.items.length} entries</div>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-400/25 shrink-0">Open</span>
+                </button>
+            `).join('');
+
+            html += `
+                <button
+                    type="button"
+                    onclick="triggerAiUniverseSearch('${escapeHtml(query)}')"
+                    class="w-full px-4 py-3.5 bg-sky-500/10 hover:bg-sky-500/20 flex items-center justify-between gap-3 transition-colors text-left cursor-pointer"
+                >
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 shrink-0">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-sm text-sky-200">Decode "${escapeHtml(query)}" with AI</div>
+                            <div class="text-xs text-slate-400">Fetch complete movie/series count, posters, runtimes & OTT links</div>
+                        </div>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-sky-400 shrink-0"></i>
+                </button>
+            `;
+
+            dropdown.innerHTML = html;
+            dropdown.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function handleSearchSubmit(e) {
+            e.preventDefault();
+            hideAutocomplete();
+            const q = document.getElementById('searchInput').value.trim();
+            if (!q) return;
+
+            const ql = q.toLowerCase();
+            let match = FRANCHISE_DB.find(f => f.title.toLowerCase() === ql || f.id === ql)
+                || FRANCHISE_DB.find(f => f.aliases.some(a => ql === a || ql.includes(a) || (ql.length >= 4 && a.includes(ql))))
+                || FRANCHISE_DB.find(f => f.items.some(i => i.title.toLowerCase().includes(ql) && ql.length >= 4));
+
+            if (match) {
+                loadFranchise(match, 'database');
+            } else {
+                triggerAiUniverseSearch(q);
+            }
+        }
+
+        function selectPresetFranchise(id) {
+            hideAutocomplete();
+            switchAppView('timeline');
+            const f = FRANCHISE_DB.find(x => x.id === id);
+            if (f) {
+                document.getElementById('searchInput').value = f.title;
+                document.getElementById('clearSearchBtn').classList.remove('hidden');
+                loadFranchise(f, 'database');
+            }
+        }
+
+        async function triggerAiUniverseSearch(query) {
+            hideAutocomplete();
+            hideStatusBanner();
+            switchAppView('timeline');
+            document.getElementById('searchInput').value = query;
+            document.getElementById('clearSearchBtn').classList.remove('hidden');
+
+            const cacheKey = `universe::${query.toLowerCase().trim()}`;
+            if (state.aiCache[cacheKey]) {
+                loadFranchise(state.aiCache[cacheKey], 'ai');
+                return;
+            }
+
+            document.getElementById('featuredSpotlight').classList.add('hidden');
+            document.getElementById('directorySection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('loadingTitle').textContent = `Decoding "${query}" Watch Order...`;
+            document.getElementById('loadingSection').classList.remove('hidden');
+
+            try {
+                const data = await fetchUniverseFromGemini(query);
+                state.aiCache[cacheKey] = data;
+                saveAiCache();
+                loadFranchise(data, 'ai');
+            } catch (err) {
+                document.getElementById('loadingSection').classList.add('hidden');
+                document.getElementById('featuredSpotlight').classList.remove('hidden');
+                document.getElementById('directorySection').classList.remove('hidden');
+                showStatusBanner("Unable to decode title", err.message || "Please try another movie, series, or K-drama name.");
+            }
+        }
+
+        async function fetchUniverseFromGemini(userQuery) {
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `You are an expert cinema, TV series, K-drama, Indian web series, and anime guide for viewers in India.
+Given any movie, series, drama, or franchise name, identify the complete universe/series it belongs to and return ALL official installments (movies, TV seasons, K-dramas, specials, OVAs) in watch order.
+For each item provide:
+- title (exact official title so poster APIs can match it cleanly)
+- year (integer)
+- type ("Movie", "TV Series", "K-Drama", "Indian Series", "Anime Series", "Special", or "OVA")
+- mins (estimated total runtime in minutes as integer, e.g., 135 for a movie or 480 for an 8-episode series)
+- duration (human string e.g. "2h 15m" or "8 Episodes • ~60m")
+- ott (array of Indian streaming platforms e.g. ["Netflix"], ["Amazon Prime Video"], ["JioHotstar"], ["Apple TV+"], ["SonyLIV"], ["Crunchyroll"], ["Viki"])
+- releaseRank (1..N)
+- chronoRank (1..N in-universe chronological order)
+- note (concise 1-sentence summary)`;
+
+            const payload = {
+                contents: [{ parts: [{ text: `Provide the complete watch order, runtime in minutes, and Indian OTT platforms for: "${userQuery}"` }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            title: { type: "STRING" },
+                            posterQuery: { type: "STRING", description: "Main flagship movie or series title for poster lookup" },
+                            category: { type: "STRING" },
+                            synopsis: { type: "STRING" },
+                            ott: { type: "ARRAY", items: { type: "STRING" } },
+                            items: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        title: { type: "STRING" },
+                                        year: { type: "INTEGER" },
+                                        type: { type: "STRING" },
+                                        mins: { type: "INTEGER" },
+                                        duration: { type: "STRING" },
+                                        ott: { type: "ARRAY", items: { type: "STRING" } },
+                                        releaseRank: { type: "NUMBER" },
+                                        chronoRank: { type: "NUMBER" },
+                                        note: { type: "STRING" }
+                                    },
+                                    required: ["title", "year", "type", "mins", "duration", "ott", "releaseRank", "chronoRank", "note"]
+                                }
+                            }
+                        },
+                        required: ["title", "posterQuery", "category", "synopsis", "ott", "items"]
+                    }
+                }
+            };
+
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error(`API Error (${res.status})`);
+            const json = await res.json();
+            const raw = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!raw) throw new Error("No data returned.");
+
+            const parsed = JSON.parse(raw);
+            if (!parsed.items || !parsed.items.length) throw new Error("No installments found.");
+
+            const slug = parsed.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            parsed.id = `ai-${slug}`;
+            parsed.items = parsed.items.map((item, idx) => ({
+                ...item,
+                id: `${parsed.id}-${idx}`
+            }));
+            return parsed;
+        }
+
+        // =========================================================================
+        // 8. FRANCHISE THEATER & CONSTELLATION TIMELINE RENDERER
+        // =========================================================================
+        function loadFranchise(franchise, sourceType = 'database') {
+            state.currentFranchise = franchise;
+            state.typeFilter = 'all';
+            state.ottFilter = 'all';
+            document.getElementById('ottFilterSelect').value = 'all';
+
+            document.getElementById('loadingSection').classList.add('hidden');
+            document.getElementById('featuredSpotlight').classList.add('hidden');
+            document.getElementById('directorySection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+
+            const sourceBadge = document.getElementById('franchiseSourceBadge');
+            sourceBadge.innerHTML = sourceType === 'database'
+                ? `<i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Curated Universe`
+                : `<i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI Decoded Universe`;
+
+            // Left Console Main Poster
+            document.getElementById('consoleFranchisePoster').innerHTML = renderPosterBox({
+                title: franchise.posterQuery || franchise.title,
+                year: franchise.items[0]?.year || '',
+                type: franchise.items[0]?.type || 'Movie',
+                ott: franchise.ott || [],
+                sizeClass: 'w-full',
+                rimGlow: true,
+                clickableData: {
+                    title: franchise.title,
+                    type: franchise.category,
+                    synopsis: franchise.synopsis,
+                    ott: franchise.ott || []
+                }
+            });
+
+            document.getElementById('franchiseCategoryBadge').textContent = franchise.category;
+            document.getElementById('franchiseTitle').textContent = franchise.title;
+            document.getElementById('franchiseSynopsis').textContent = franchise.synopsis;
+
+            const total = franchise.items.length;
+            const movies = franchise.items.filter(i => i.type.toLowerCase() === 'movie').length;
+            const series = total - movies;
+
+            document.getElementById('statBreakdown').textContent = `${movies} Movies • ${series} Series/Specials`;
+            document.getElementById('countAll').textContent = total;
+            document.getElementById('countMovie').textContent = movies;
+            document.getElementById('countSeries').textContent = series;
+
+            updateOrderModeButtons();
+            updateFilterButtons();
+            updateProgressAndRuntimeUI();
+            renderTimelineItems();
+            lucide.createIcons();
+
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function setWatchOrderMode(mode) {
+            state.orderMode = mode;
+            updateOrderModeButtons();
+            renderTimelineItems();
+        }
+
+        function updateOrderModeButtons() {
+            const btnRel = document.getElementById('btnOrderRelease');
+            const btnChr = document.getElementById('btnOrderChronological');
+            const note = document.getElementById('orderGuidanceText');
+
+            if (state.orderMode === 'release') {
+                btnRel.className = "flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow cursor-pointer";
+                btnChr.className = "flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white cursor-pointer";
+                note.innerHTML = `<strong>Release Order</strong> is best for first-time viewers so reveals and cliffhangers land properly.`;
+            } else {
+                btnChr.className = "flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow cursor-pointer";
+                btnRel.className = "flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white cursor-pointer";
+                note.innerHTML = `<strong>Chronological Order</strong> follows exact in-universe timeline dates—ideal for lore rewatches.`;
+            }
+        }
+
+        function setTypeFilter(filter) {
+            state.typeFilter = filter;
+            updateFilterButtons();
+            renderTimelineItems();
+        }
+
+        function setOttFilter(ott) {
+            state.ottFilter = ott;
+            renderTimelineItems();
+        }
+
+        function updateFilterButtons() {
+            ['all', 'movie', 'series'].forEach(key => {
+                const el = document.getElementById(`filter${key.charAt(0).toUpperCase() + key.slice(1)}`);
+                if (state.typeFilter === key) {
+                    el.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/40 whitespace-nowrap cursor-pointer";
+                } else {
+                    el.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-obsidian-950/80 text-slate-400 hover:text-white border border-slate-800 whitespace-nowrap cursor-pointer";
+                }
+            });
+        }
+
+        function renderTimelineItems() {
+            const franchise = state.currentFranchise;
+            if (!franchise) return;
+
+            let list = [...franchise.items].sort((a, b) =>
+                state.orderMode === 'release' ? a.releaseRank - b.releaseRank : a.chronoRank - b.chronoRank
+            );
+
+            if (state.typeFilter === 'movie') {
+                list = list.filter(i => i.type.toLowerCase() === 'movie');
+            } else if (state.typeFilter === 'series') {
+                list = list.filter(i => i.type.toLowerCase() !== 'movie');
+            }
+
+            if (state.ottFilter !== 'all') {
+                list = list.filter(i => (i.ott || []).some(o => o.toLowerCase().includes(state.ottFilter.toLowerCase())));
+            }
+
+            const container = document.getElementById('timelineContainer');
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-panel rounded-2xl p-8 text-center text-slate-400 text-sm">
+                        No entries match the current format or OTT platform filter.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map((item, index) => {
+                const isWatched = state.watchedIds.has(item.id);
+                const posterHtml = renderPosterBox({
+                    title: item.title,
+                    year: item.year,
+                    type: item.type,
+                    ott: item.ott || [],
+                    sizeClass: 'w-16 sm:w-20',
+                    clickableData: {
+                        itemId: item.id,
+                        title: item.title,
+                        year: item.year,
+                        type: item.type,
+                        duration: item.duration,
+                        note: item.note,
+                        ott: item.ott || []
+                    }
+                });
+
+                return `
+                    <div
+                        onclick="toggleItemWatched('${item.id}')"
+                        class="constellation-node group relative flex items-start gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+                            isWatched
+                                ? 'bg-obsidian-900/45 border-emerald-500/30 opacity-80 hover:opacity-100'
+                                : 'glass-card'
+                        }"
+                    >
+                        <!-- Constellation Step Node -->
+                        <div class="constellation-track relative z-10 flex flex-col items-center shrink-0 pt-1">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-mono font-bold text-xs border transition-all ${
+                                isWatched
+                                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40'
+                                    : 'bg-obsidian-950 text-sky-300 border-sky-500/40 shadow-md shadow-sky-500/20 group-hover:border-sky-300'
+                            }">
+                                #${index + 1}
+                            </div>
+                        </div>
+
+                        <!-- 2:3 Movie/Series Poster Thumbnail -->
+                        ${posterHtml}
+
+                        <!-- Entry Details -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                                <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-400/25">
+                                    ${escapeHtml(item.type)}
+                                </span>
+                                <span class="text-xs font-mono text-slate-400">${item.year}</span>
+                                <span class="text-slate-600">•</span>
+                                <span class="text-xs font-mono text-cyan-300 flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    ${escapeHtml(item.duration)}
+                                </span>
+                            </div>
+
+                            <h3 class="font-display font-bold text-sm sm:text-lg leading-snug transition-colors ${
+                                isWatched ? 'text-slate-400 line-through decoration-slate-600' : 'text-white group-hover:text-sky-300'
+                            }">
+                                ${escapeHtml(item.title)}
+                            </h3>
+
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed line-clamp-2">
+                                ${escapeHtml(item.note)}
+                            </p>
+
+                            <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
+                                ${renderOttBadges(item.ott || [])}
+                            </div>
+                        </div>
+
+                        <!-- Watched Toggle Checkbox -->
+                        <div class="shrink-0 self-center pl-1">
+                            <div class="w-7 h-7 rounded-xl border-2 flex items-center justify-center transition-all ${
+                                isWatched
+                                    ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25'
+                                    : 'border-slate-700 bg-obsidian-950 group-hover:border-sky-400 text-transparent'
+                            }">
+                                <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // 9. PROGRESS, RUNTIME TELEMETRY & DRAWER
+        // =========================================================================
+        function toggleItemWatched(itemId) {
+            if (state.watchedIds.has(itemId)) state.watchedIds.delete(itemId);
+            else state.watchedIds.add(itemId);
+
+            saveWatched();
+            updateProgressAndRuntimeUI();
+            renderTimelineItems();
+            renderDirectoryGrid();
+        }
+
+        function resetFranchiseProgress() {
+            if (!state.currentFranchise) return;
+            state.currentFranchise.items.forEach(i => state.watchedIds.delete(i.id));
+            saveWatched();
+            updateProgressAndRuntimeUI();
+            renderTimelineItems();
+            renderDirectoryGrid();
+        }
+
+        function updateProgressAndRuntimeUI() {
+            const f = state.currentFranchise;
+            if (!f) return;
+
+            const total = f.items.length;
+            const watchedItems = f.items.filter(i => state.watchedIds.has(i.id));
+            const watchedCount = watchedItems.length;
+            const pct = total > 0 ? Math.round((watchedCount / total) * 100) : 0;
+
+            const totalMins = f.items.reduce((acc, i) => acc + (i.mins || 120), 0);
+            const watchedMins = watchedItems.reduce((acc, i) => acc + (i.mins || 120), 0);
+            const remMins = Math.max(0, totalMins - watchedMins);
+
+            document.getElementById('progressPercentText').textContent = `${pct}%`;
+            document.getElementById('progressCountText').textContent = `${watchedCount} of ${total} Watched`;
+            document.getElementById('statRuntime').textContent = formatMinutes(totalMins);
+            document.getElementById('statRemainingRuntime').textContent = formatMinutes(remMins);
+
+            // Update Circular SVG Stroke (circumference = 2 * pi * 26 = 163.36)
+            const circumference = 163.36;
+            const offset = circumference - (pct / 100) * circumference;
+            document.getElementById('progressRingCircle').style.strokeDashoffset = offset;
+        }
+
+        function updateGlobalWatchedPill() {
+            document.getElementById('globalWatchedPill').textContent = state.watchedIds.size;
+        }
+
+        function toggleProgressDrawer() {
+            const drawer = document.getElementById('progressDrawer');
+            const backdrop = document.getElementById('progressDrawerBackdrop');
+            const isOpen = !drawer.classList.contains('translate-x-full');
+
+            if (isOpen) {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            } else {
+                renderProgressDrawerContent();
+                backdrop.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+            }
+        }
+
+        function renderProgressDrawerContent() {
+            const container = document.getElementById('progressDrawerContent');
+            const tracked = FRANCHISE_DB.map(f => {
+                const watched = f.items.filter(i => state.watchedIds.has(i.id)).length;
+                return { franchise: f, watched, total: f.items.length };
+            }).filter(x => x.watched > 0);
+
+            if (tracked.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 px-4 space-y-2">
+                        <i data-lucide="film" class="w-10 h-10 text-sky-400/50 mx-auto"></i>
+                        <p class="font-display font-bold text-white text-sm">No watch progress recorded yet</p>
+                        <p class="text-xs text-slate-400">Open any movie franchise, K-drama, or series and check off episodes or films you've watched.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = tracked.map(({ franchise, watched, total }) => {
+                const pct = Math.round((watched / total) * 100);
+                const miniPoster = renderPosterBox({
+                    title: franchise.posterQuery || franchise.title,
+                    type: franchise.items[0]?.type,
+                    ott: franchise.ott,
+                    sizeClass: 'w-12'
+                });
+
+                return `
+                    <div onclick="toggleProgressDrawer(); selectPresetFranchise('${franchise.id}')" class="glass-card rounded-2xl p-3 flex items-center gap-3 cursor-pointer">
+                        ${miniPoster}
+                        <div class="flex-1 min-w-0">
+                            <div class="font-display font-bold text-sm text-white truncate">${franchise.title}</div>
+                            <div class="text-xs text-slate-400 mt-0.5">${watched} of ${total} completed</div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-2">
+                                <div class="h-full bg-gradient-to-r from-sky-400 to-blue-600 rounded-full" style="width:${pct}%"></div>
+                            </div>
+                        </div>
+                        <span class="font-mono font-bold text-xs text-sky-300">${pct}%</span>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // 10. AI MATCHMAKER (MOVIES, DRAMAS & SERIES RECOMMENDER WITH POSTERS)
+        // =========================================================================
+        function setRecFormat(fmt) {
+            state.recFormat = fmt;
+            document.querySelectorAll('.rec-fmt-pill').forEach(btn => {
+                if (btn.id === `recFmt-${fmt}`) {
+                    btn.className = "rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow cursor-pointer";
+                } else {
+                    btn.className = "rec-fmt-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-obsidian-900 text-slate-400 hover:text-white border border-slate-800 cursor-pointer";
+                }
+            });
+        }
+
+        function triggerQuickRecommend(promptText) {
+            document.getElementById('recommendInput').value = promptText;
+            fetchAiRecommendations(promptText);
+        }
+
+        function handleRecommendSubmit(e) {
+            e.preventDefault();
+            const q = document.getElementById('recommendInput').value.trim();
+            if (!q) return;
+            fetchAiRecommendations(q);
+        }
+
+        async function fetchAiRecommendations(userMood) {
+            const loading = document.getElementById('recommendLoading');
+            loading.classList.remove('hidden');
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const systemPrompt = `You are an elite cinema, TV drama, K-drama, Indian web series, and anime curator for viewers in India.
+Recommend 6 standout titles matching the user's request and selected format (${state.recFormat}).
+For each recommendation provide:
+- title (exact official title so poster APIs resolve cleanly)
+- year (integer)
+- type ("Movie", "TV Series", "K-Drama", "Indian Series", or "Anime Series")
+- rating (IMDb/MDL score string e.g. "8.8/10")
+- duration (e.g. "2h 18m" or "16 Episodes • ~60m")
+- ott (array of Indian streaming platforms e.g. ["Netflix"], ["Amazon Prime Video"], ["JioHotstar"], ["Apple TV+"], ["SonyLIV"], ["Crunchyroll"], ["Viki"])
+- reason (2 engaging sentences explaining why it fits the user's mood)`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: `Format preference: ${state.recFormat}. User request: "${userMood}"` }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                recommendations: {
+                                    type: "ARRAY",
+                                    items: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            title: { type: "STRING" },
+                                            year: { type: "INTEGER" },
+                                            type: { type: "STRING" },
+                                            rating: { type: "STRING" },
+                                            duration: { type: "STRING" },
+                                            ott: { type: "ARRAY", items: { type: "STRING" } },
+                                            reason: { type: "STRING" }
+                                        },
+                                        required: ["title", "year", "type", "rating", "duration", "ott", "reason"]
+                                    }
+                                }
+                            },
+                            required: ["recommendations"]
+                        }
+                    }
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error("Failed to fetch recommendations");
+
+                const data = await res.json();
+                const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                const parsed = JSON.parse(raw);
+
+                loading.classList.add('hidden');
+                renderRecommendations(parsed.recommendations, `Matches for "${userMood}"`, state.recFormat);
+            } catch (err) {
+                loading.classList.add('hidden');
+                showStatusBanner("Recommender Notice", "Could not fetch live AI picks right now. Showing curated favorites.");
+            }
+        }
+
+        function renderRecommendations(items, headingText, subtag) {
+            document.getElementById('recommendHeading').textContent = headingText;
+            document.getElementById('recommendSubtag').textContent = subtag;
+            const grid = document.getElementById('recommendGrid');
+
+            grid.innerHTML = items.map(rec => {
+                const posterHtml = renderPosterBox({
+                    title: rec.title,
+                    year: rec.year,
+                    type: rec.type,
+                    ott: rec.ott || [],
+                    sizeClass: 'w-24 sm:w-28',
+                    clickableData: {
+                        title: rec.title,
+                        year: rec.year,
+                        type: rec.type,
+                        duration: rec.duration,
+                        synopsis: rec.reason,
+                        ott: rec.ott || [],
+                        franchiseId: rec.franchiseId || null
+                    }
+                });
+
+                const watchOrderAction = rec.franchiseId
+                    ? `selectPresetFranchise('${rec.franchiseId}')`
+                    : `triggerAiUniverseSearch('${escapeHtml(rec.title)}')`;
+
+                return `
+                    <div class="glass-card rounded-2xl p-4 flex gap-4 items-stretch">
+                        ${posterHtml}
+                        <div class="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-400/25">
+                                        ${escapeHtml(rec.type)}
+                                    </span>
+                                    <span class="text-xs font-mono font-bold text-amber-300 flex items-center gap-1">
+                                        <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
+                                        ${escapeHtml(rec.rating)}
+                                    </span>
+                                </div>
+                                <h4 class="font-display font-bold text-base text-white leading-snug">
+                                    ${escapeHtml(rec.title)} <span class="text-xs font-mono font-normal text-slate-400">(${rec.year})</span>
+                                </h4>
+                                <div class="text-[11px] font-mono text-cyan-300 mt-0.5 flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    <span>${escapeHtml(rec.duration)}</span>
+                                </div>
+                                <p class="text-xs text-slate-300 mt-2 leading-relaxed line-clamp-3">
+                                    ${escapeHtml(rec.reason)}
+                                </p>
+                            </div>
+
+                            <div class="pt-3 mt-2 border-t border-slate-800/80 space-y-2">
+                                <div class="flex flex-wrap gap-1">
+                                    ${renderOttBadges(rec.ott || [])}
+                                </div>
+                                <button
+                                    onclick="${watchOrderAction}"
+                                    class="w-full py-1.5 px-3 rounded-xl bg-sky-500/15 hover:bg-sky-500 hover:text-slate-950 text-sky-300 border border-sky-400/30 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                >
+                                    <i data-lucide="list-ordered" class="w-3.5 h-3.5"></i>
+                                    <span>View Watch Order & Seasons</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // 11. FORMATTING & OTT BADGE HELPERS
+        // =========================================================================
+        function renderOttBadges(ottList) {
+            if (!ottList || ottList.length === 0) return '';
+            return ottList.map(ott => {
+                const lower = ott.toLowerCase();
+                let style = 'bg-slate-800/90 text-slate-200 border-slate-700';
+                if (lower.includes('netflix')) style = 'bg-rose-500/15 text-rose-300 border-rose-500/30';
+                else if (lower.includes('prime')) style = 'bg-sky-500/15 text-sky-300 border-sky-400/30';
+                else if (lower.includes('hotstar')) style = 'bg-blue-500/20 text-blue-200 border-blue-400/35';
+                else if (lower.includes('crunchyroll')) style = 'bg-orange-500/15 text-orange-300 border-orange-500/30';
+                else if (lower.includes('apple')) style = 'bg-slate-200/15 text-white border-slate-400/30';
+                else if (lower.includes('viki')) style = 'bg-cyan-500/15 text-cyan-300 border-cyan-400/30';
+
+                return `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md border ${style}">${escapeHtml(ott)}</span>`;
+            }).join('');
+        }
+
+        function formatMinutes(totalMins) {
+            if (!totalMins || totalMins <= 0) return '0m';
+            const hrs = Math.floor(totalMins / 60);
+            const mins = totalMins % 60;
+            if (hrs === 0) return `${mins}m`;
+            if (mins === 0) return `${hrs}h`;
+            return `${hrs}h ${mins}m`;
+        }
+
+        function showStatusBanner(title, message) {
+            document.getElementById('statusBannerTitle').textContent = title;
+            document.getElementById('statusBannerMessage').textContent = message;
+            document.getElementById('statusBanner').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function hideStatusBanner() {
+            document.getElementById('statusBanner').classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, m => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[m]));
+        }
+    </script>
+</body>
+</html>
